@@ -12,8 +12,15 @@ using namespace std;
 #include "Cylinder.h"
 
 int main(int argc, const char * argv[]) {
+  // programmer's identification
+  cout << "Programmer: Jessica Sullivan" << endl;
+  cout << "Programmer's ID: 1282151" << endl;
+  cout << "File: " << __FILE__ << endl;
+  
   Cylinder cylinder;
   cylinder.init(10, 20);
-  cout << "The volume is: " << cylinder.getVolume();
+  
+  cout << "The volume is: " << cylinder.getVolume() << endl;
+  
   return 0;
 }

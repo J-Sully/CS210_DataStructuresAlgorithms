@@ -16,18 +16,21 @@ using namespace std;
 // Listing of constants for easy changes to 7 day weeks or other
 // adjustments
 static const int NUM_EMPLOYEES = 4;
-static const int NUM_DAYS = 5;
-static const char* DAYS[] = {"MONDAY", "TUESDAY", "WEDNESDAY",
-                             "THURSDAY", "FRIDAY"};
 static const double NUM_HOURS_FOR_OVERTIME = 40;
 static const double PERCENT_WAGE_OT = 1.5;
 
 bool validateInput(const string &input, double &value);
 void initialize(Employee *employees); // initialize members of employee
 void compute(Employee &employee); // calculate total wages
-void result(const Employee &employee); // prints employee info
+void result(Employee employee); // prints employee info
 
 int main(int argc, const char * argv[]) {
+  
+  // programmer's identification
+  cout << "Programmer: Jessica Sullivan" << endl;
+  cout << "Programmer's ID: 1282151" << endl;
+  cout << "File: " << __FILE__ << endl;
+  
   Employee employees[NUM_EMPLOYEES];
   initialize(employees);
   
@@ -60,10 +63,9 @@ void initialize(Employee *employees) {
     employees[i].mLName = lName; // no error catching required
     
     // go through each day of the work week
-    for (int j = 0; j < NUM_DAYS; j++) {
+    for (int j = 0; j < NUM_WORKDAYS; j++) {
       do {
-        cout << endl << "Enter hours worked on: "
-                        + static_cast<string>(DAYS[j]) + " : ";
+        cout << endl << "Enter hours worked on: " << DAYS[j] << " : ";
         getline(cin, input);
         
         //valid makes sure input is valid for hours
@@ -102,7 +104,7 @@ void initialize(Employee *employees) {
 void compute(Employee &employee) {
   double totalHours = 0;
   
-  for (int i = 0; i < NUM_DAYS; i++) {
+  for (int i = 0; i < NUM_WORKDAYS; i++) {
     totalHours += employee.mHours[i];
   }
   
@@ -114,14 +116,9 @@ void compute(Employee &employee) {
 }
 
 //prints out relevant information about employees.
-void result(const Employee &employee) {
+//Passing by value according to the instructions instead of by reference
+void result(Employee employee) {
   cout << endl << "Employee Name: " << employee.mLName << endl;
-  cout << endl << "Hours Worked: " << endl;
-  
-  for (int i = 0; i < NUM_DAYS; i++) {
-    cout << setw(10) << left << DAYS[i] << ": " << setw(5) << right
-         << employee.mHours[i] << " hours" << endl;
-  }
-  cout << endl << "Total Wages: $" << fixed << setprecision(2)
+  cout << "Total Wages: $" << fixed << setprecision(2)
        << employee.mWages << endl;
 }

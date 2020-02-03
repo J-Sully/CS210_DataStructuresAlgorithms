@@ -1,4 +1,5 @@
-//
+// Programmer: Jessica Sullivan
+// Programmer's ID: 1282151
 //  Cylinder.h
 //  CS210_Assignment1B
 //
@@ -13,9 +14,11 @@
 
 class Cylinder {
 private:
-  int radius;
-  int height;
+  int radius = 0;
+  int height = 0;
 public:
+  Cylinder(){}
+  Cylinder(int r, int h) { init(r,h); }
   void init(int, int);
   double getVolume() {return M_PI * radius * radius * height;}
 };
