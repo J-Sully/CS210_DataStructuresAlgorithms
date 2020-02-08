@@ -13,6 +13,8 @@ using namespace std;
 
 #include "DynamicStringArray.h"
 
+const string DynamicStringArray::BAD_INPUT = "NULL";
+
 int main(int argc, const char * argv[]) {
   // programmer's identification
   cout << "Programmer: Jessica Sullivan" << endl;
@@ -97,88 +99,3 @@ int main(int argc, const char * argv[]) {
   cin >> wait;
   return 0;
 }
-
-
-/*
-// ensures that number input is valid - no whitespace, letters, or negatives
-bool validateInput(const string &input, double &value) {
-  stringstream ss;
-  ss.str(input);
-  ss >> value;
-  return value >= 0 && !ss.fail();
-}
-
-// gets info from users and calls validateInput on numbers inputed
-void initialize(Employee *employees) {
-  string input, lName = "";
-  double hours = -1, wages = -1;
-  stringstream ss;
-  bool valid = false;
-  
-  // go through each of the employees to get info
-  for (int i = 0; i < NUM_EMPLOYEES; i++) {
-    cout << endl << "Enter Last Name of Employee " << i + 1 << ": ";
-    getline(cin, lName);
-    employees[i].mLName = lName; // no error catching required
-    
-    // go through each day of the work week
-    for (int j = 0; j < NUM_WORKDAYS; j++) {
-      do {
-        cout << endl << "Enter hours worked on: " << DAYS[j] << " : ";
-        getline(cin, input);
-        
-        //valid makes sure input is valid for hours
-        valid = validateInput(input, hours) && hours <= 24;
-        if (!valid) {
-          cerr << endl << "Error, " << input << " is an invalid input."
-          << endl;
-          hours = -1;
-        }
-        input = "";
-      } while (!valid);
-      
-      employees[i].mHours[j] = hours;
-      valid = false;
-    }
-    
-    do {
-      cout << endl << "Enter hourly wage : $";
-      getline(cin, input);
-      
-      //valid makes sure wages are valid
-      valid = validateInput(input, wages);
-      if (!valid) {
-        cerr << endl << "Error, " << input << " is an invalid input."
-        << endl;
-        wages = -1;
-        input = "";
-      }
-    } while (!valid);
-    
-    employees[i].mHourlyWage = wages;
-  }
-}
-
-// computes wages of employees based on total hours worked and wage rate
-void compute(Employee &employee) {
-  double totalHours = 0;
-  
-  for (int i = 0; i < NUM_WORKDAYS; i++) {
-    totalHours += employee.mHours[i];
-  }
-  
-  employee.mWages = totalHours > NUM_HOURS_FOR_OVERTIME
-  ? NUM_HOURS_FOR_OVERTIME * employee.mHourlyWage
-  + (totalHours - NUM_HOURS_FOR_OVERTIME)
-  * employee.mHourlyWage * PERCENT_WAGE_OT
-  : totalHours * employee.mHourlyWage;
-}
-
-//prints out relevant information about employees.
-//Passing by value according to the instructions instead of by reference
-void result(Employee employee) {
-  cout << endl << "Employee Name: " << employee.mLName << endl;
-  cout << "Total Wages: $" << fixed << setprecision(2)
-  << employee.mWages << endl;
-}
-*/

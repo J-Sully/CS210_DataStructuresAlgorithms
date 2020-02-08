@@ -14,33 +14,42 @@ using namespace std;
 */
 #include "DynamicStringArray.h"
 
-DynamicStringArray::DynamicStringArray(){
+DynamicStringArray::DynamicStringArray() {
   mSize = 0;
   mDynamicArray = nullptr;
 }
 
 DynamicStringArray::DynamicStringArray(const DynamicStringArray &srcArray) {
-  mSize = srcArray.mSize;
-  mDynamicArray = new string[mSize];
-  for (int i = 0; i < mSize; i++) {
-    mDynamicArray[i] = srcArray.mDynamicArray[i];
-  }
+  copyData(srcArray);
 }
 
-DynamicStringArray& DynamicStringArray:: operator=(const DynamicStringArray &srcArray) {
-  mSize = srcArray.mSize;
-  mDynamicArray = new string[mSize];
-  for (int i = 0; i < mSize; i++) {
-    mDynamicArray[i] = srcArray.mDynamicArray[i];
-  }
+DynamicStringArray& DynamicStringArray::operator=(const DynamicStringArray &srcArray) {
+  copyData(srcArray);
   return *this;
+}
+
+bool DynamicStringArray::copyData(const DynamicStringArray &srcArray) {
+  mSize = srcArray.mSize;
+  if (mSize > 0 && srcArray.mDynamicArray != nullptr) {
+    delete [] mDynamicArray; // this is safe, I checked. 
+    mDynamicArray = new string[mSize];
+    for (int i = 0; i < mSize; i++) {
+      mDynamicArray[i] = srcArray.mDynamicArray[i];
+    }
+    return true;
+  }
+  else {
+    mSize = 0;
+    mDynamicArray = nullptr;
+    return false;
+  }
 }
 
 void DynamicStringArray::addEntry(const string &entry) {
   string *tempArray = mDynamicArray;
   mSize++;
   mDynamicArray = new string[mSize];
-  
+  // make sure array exists
   if (tempArray != nullptr) {
     for (int i = 0; i < mSize - 1; i++) {
       mDynamicArray[i] = tempArray[i];
@@ -67,7 +76,13 @@ bool DynamicStringArray::deleteEntry(const string &entry) {
   int numEntries = getNumMatchingEntries(entry);
   int newSize = mSize - numEntries;
   
-  if (numEntries) {
+  if (newSize == 0 && mSize > 0) {
+    mSize = 0;
+    delete [] mDynamicArray;
+    mDynamicArray = nullptr;
+  }
+  
+  else if (newSize != mSize) {
     mDynamicArray = new string[newSize];
     for (int i = 0, j = 0; j < newSize && i < mSize; i++) {
       if (tempArray[i] != entry) {
@@ -78,6 +93,7 @@ bool DynamicStringArray::deleteEntry(const string &entry) {
     delete [] tempArray;
     mSize = newSize;
   }
+  
   else {
     return false;
   }
