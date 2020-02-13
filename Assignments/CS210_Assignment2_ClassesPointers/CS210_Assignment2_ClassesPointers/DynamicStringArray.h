@@ -30,8 +30,11 @@ public:
   
   int getSize() const { return mSize; }
   //returns a desired BAD_INPUT string in cases of error - array doesn't exist (null) or is empty or index is out of range
+  
+  
   const string& getEntry(int index) const { return index >= 0 && index < mSize
                                           ? mDynamicArray[index] : BAD_INPUT; };
+   
   
   void addEntry(const string &entry);
   //deleteEntry will delete ALL matching entries. The bool is an error catching mechanism False means that the array doesn't exist (null) or its empty or that there wasn't a match

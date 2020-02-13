@@ -2,8 +2,6 @@
  Programmer: Jessica Sullivan
  Programmer's ID: 1282151
  Class: COMSC-210-5067
- Goal: Write a program that will record information about employees
- and will compute their paychecks
  */
 #include <string>
 #include <sstream>
@@ -11,9 +9,7 @@
 #include <iomanip>
 using namespace std;
 
-#include "DynamicStringArray.h"
-
-const string DynamicStringArray::BAD_INPUT = "NULL";
+#include "DynamicArray.h"
 
 int main(int argc, const char * argv[]) {
   // programmer's identification
@@ -21,7 +17,8 @@ int main(int argc, const char * argv[]) {
   cout << "Programmer's ID: 1282151" << endl;
   cout << "File: " << __FILE__ << endl;
   
-  DynamicStringArray names;
+  DynamicArray<string> names;
+  
   // List of names
   names.addEntry("Frank");
   names.addEntry("Wiggum");
@@ -77,7 +74,7 @@ int main(int argc, const char * argv[]) {
   cout << endl;
   
   cout << "Testing copy constructor" << endl;
-  DynamicStringArray names2(names);
+  DynamicArray<string> names2(names);
   // Remove Olivia from names
   names.deleteEntry("Olivia");
   cout << "Copied names:" << endl;
@@ -86,12 +83,7 @@ int main(int argc, const char * argv[]) {
   cout << endl;
   
   cout << "Testing assignment" << endl;
-  // we can't set names3 = names2 here, since some compilers optimize
-  // that into a copy constructor and we want to test operator=()
-  //DynamicStringArray names3 = names2;
-  // Break it up into default constructor and operator=(), separately:
-  DynamicStringArray names3;
-  names3 = names2;
+  DynamicArray<string> names3 = names2;
   // Remove Olivia from names2
   names2.deleteEntry("Olivia");
   cout << "Copied names:" << endl;
@@ -99,37 +91,15 @@ int main(int argc, const char * argv[]) {
     cout << names3.getEntry(i) << endl;
   cout << endl;
   
-  cout << "Testing delete multiple entries" << endl;
-  DynamicStringArray names4;
-  names4.addEntry("Jack");
-  names4.addEntry("Jill");
-  names4.addEntry("Jack");
-  names4.deleteEntry("Jack");
-  for (int i = 0; i < names4.getSize(); i++)
-    cout << names4.getEntry(i) << endl;
+  cout << "Testing dynamic array of ints" << endl;
+  DynamicArray<int> nums;
+  nums.addEntry(10);
+  nums.addEntry(20);
+  nums.addEntry(30);
+  for (int i = 0; i < nums.getSize(); i++)
+    cout << nums.getEntry(i) << endl;
   cout << endl;
   
-  cout << "Test get out of bounds entry." << endl;
-  cout << "Large index: " << names4.getEntry(1000) << endl;
-  cout << "Size index: " << names4.getEntry(names4.getSize()) << endl;
-  cout << "Negative index: " << names4.getEntry(-1) << endl;
-  cout << endl;
-  
-  cout << "Test copy constructor of an empty array" << endl;
-  DynamicStringArray names5;
-  DynamicStringArray names6(names5);
-  for (int i = 0; i < names6.getSize(); i++)
-    cout << names6.getEntry(i) << endl;
-  cout << endl;
-  
-  cout << "Test assignment of an empty array" << endl;
-  DynamicStringArray names7;
-  names7 = names5;
-  for (int i = 0; i < names7.getSize(); i++)
-    cout << names7.getEntry(i) << endl;
-  cout << endl;
-  
-
   cout << "Enter a character to exit." << endl;
   char wait;
   cin >> wait;
