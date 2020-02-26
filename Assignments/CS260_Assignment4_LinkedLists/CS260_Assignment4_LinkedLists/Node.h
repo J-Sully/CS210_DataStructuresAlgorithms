@@ -19,13 +19,13 @@ using namespace std;
 struct Node {
 public:
   Node(){};
-  Node(unsigned int accNum, const string &fname, const string &lname, int accBalance)
+  Node(unsigned int accNum, const string &fname, const string &lname, double accBalance)
   : mFname(fname), mLname(lname), mAccNum(accNum), mAccBalance(accBalance) {}
   
   string mFname = "";
   string mLname = "";
   unsigned int mAccNum = 0;
-  int mAccBalance = 0;
+  double mAccBalance = 0;
   Node* nextNode = this;
   Node* prevNode = this;
 };

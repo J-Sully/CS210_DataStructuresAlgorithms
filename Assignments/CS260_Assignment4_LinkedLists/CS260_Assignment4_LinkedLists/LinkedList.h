@@ -21,42 +21,45 @@ using namespace std;
 #include "Node.h"
 
 
+static const string TEMP_NEWMASTER = "temp_master.txt";
 
 class LinkedList {
 public:
-  LinkedList(){}
-  LinkedList(const string &filename) { loadData(filename); }
+  LinkedList() {}
+  LinkedList(const string& filename) { loadData(filename); }
+  ~LinkedList();
+  
+  Node* getHead() const { return mHead; }
+  void addNode(Node* addNode);
+  void writeData(stringstream&);
+  
 private:
   bool loadData(const string& filename);
   bool saveData(const string& filename);
-  bool logData(const string& filename, const string &op);
-  void writeData(stringstream&);
-  Node* head = new Node;
-  unsigned int opNumber = 0;
+  Node* mHead = new Node;
+  
 };
+
+LinkedList::~LinkedList() {
+  Node* nextNode = mHead->nextNode;
+  saveData(TEMP_NEWMASTER);
+  while(nextNode != mHead) {
+    delete nextNode->prevNode;
+    nextNode = nextNode->nextNode;
+  }  
+}
 
 bool LinkedList::loadData(const string& filename) {
   ifstream fopen(filename);
   string fname,lname = "";
   unsigned int accNum = 0;
-  int accBalance = 0;
-  head = new Node;
+  double accBalance = 0;
+  mHead = new Node;
 
   if(fopen) {
     while(fopen >> accNum >> fname >> lname >> accBalance) {
       Node *newNode = new Node(accNum, fname, lname, accBalance);
-      if (head->nextNode == head) { //if empty list
-        head->nextNode = newNode;
-        head->prevNode = newNode;
-        newNode->nextNode = head;
-        newNode->prevNode = head;
-      }
-      else {
-        head->prevNode->nextNode = newNode;
-        newNode->prevNode = head->prevNode->nextNode;
-        newNode->nextNode = head;
-        head->prevNode->prevNode = newNode;
-      }
+      addNode(newNode);
     }
     fopen.close();
     return true;
@@ -81,41 +84,47 @@ bool LinkedList::saveData(const string& filename) {
   }
 }
 
-bool LinkedList::logData(const string& filename, const string &op = "") {
-  fstream fmanip(filename, ios::in | ios::app);
-  stringstream ss;
-  string test = "";
-  bool success = false;
-  
-  if(fmanip) {
-    success = true;
-    if (!getline(fmanip,test)) {
-      fmanip << "List at Start:" << endl;
-      writeData(ss);
-      fmanip << ss.str();
-    }
-    else {
-      fmanip << "Update #" << opNumber << endl;
-      fmanip << op << endl << endl;
-      fmanip << "List after Update #" << opNumber << ':' << endl;
-      writeData(ss);
-      fmanip << ss.str();
-    }
-  }
-  else {
-    success = false;
-  }
-  return success;
-}
-
 void LinkedList::writeData(stringstream& ss) {
-  Node *current = head->nextNode;
-  while (current != head) {
+  Node *current = mHead->nextNode;
+  while (current != mHead) {
     ss << current->mAccNum << ' ' << current->mFname << ' '
     << current->mLname << ' ' << current->mAccBalance << endl;
   }
   ss << endl;
 }
+
+void LinkedList::addNode(Node* addNode) {
+  bool found = false;
+  Node* current = mHead->nextNode;
+  if (mHead->nextNode == mHead) { // empty list
+    mHead->nextNode = addNode;
+    mHead->prevNode = addNode;
+    addNode->nextNode = mHead;
+    addNode->prevNode = mHead;
+  }
+  else {
+    while (current->nextNode != mHead) {
+      if (current->mAccNum < addNode->mAccNum
+          && current->nextNode->mAccNum > addNode->mAccNum) {
+        addNode->nextNode = current->nextNode;
+        addNode->prevNode = current;
+        current->nextNode->prevNode = addNode;
+        current->nextNode = addNode;
+        found = true;
+        break;
+      }
+      if (!found) {
+        current->nextNode = addNode;
+        mHead->prevNode = addNode;
+        addNode->nextNode = mHead;
+        addNode->prevNode = current;
+        
+      }
+    }
+  }
+}
+
+
 
 
 
