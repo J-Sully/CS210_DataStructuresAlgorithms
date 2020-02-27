@@ -33,7 +33,7 @@ bool parseOp(const string &op, unsigned int &accNum, string &fname,
   return ss.fail();
 }
 
-bool logData(const string& filename, LinkedList* list, const int &opNumber, const string &op = "") {
+bool logData(const string& filename, LinkedList* list, const int &opNumber = 0, const string &op = "") {
   fstream fmanip(filename, ios::in | ios::app);
   stringstream ss;
   string test = "";
@@ -60,7 +60,7 @@ bool logData(const string& filename, LinkedList* list, const int &opNumber, cons
   return success;
 }
 
-bool updateAccounts(const string& filename, LinkedList* list, Node* current) {
+void updateAccounts(const string& filename, LinkedList* list, Node* current) {
   ifstream fopenTrans(TRANSACTION_FILENAME);
   ofstream fLogData;
   unsigned int opNumber = 0;
@@ -68,18 +68,28 @@ bool updateAccounts(const string& filename, LinkedList* list, Node* current) {
   double transaction = 0;
   string fname, lname, op = "";
   
-  bool success = false;
-  
+  logData(LOG_FILENAME, list);
   if(fopenTrans) {
     while(getline(fopenTrans,op)) {
       if(parseOp(op, accNum, fname, lname, transaction)) {
         opNumber++;
-        current =
+        if(list->getNode(accNum, current)) {
+          if (!current->updateAccount(transaction)) {
+            list->deleteNode(current);
+            current = list->getHead();
+          }
+        }
+        else {
+          Node* addNode = new Node(accNum, fname, lname, transaction);
+          if (current->mAccBalance > 0) {
+            list->insertNode(addNode, current);
+          }
+        }
       }
+      opNumber++;
+      logData(LOG_FILENAME, list, opNumber, op);
     }
   }
-  
-  return success;
 }
 
 

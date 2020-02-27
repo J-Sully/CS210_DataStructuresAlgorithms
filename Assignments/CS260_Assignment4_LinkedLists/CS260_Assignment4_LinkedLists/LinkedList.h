@@ -32,6 +32,8 @@ public:
   Node* getHead() const { return mHead; }
   bool getNode(unsigned int accNum, Node* foundNode);
   void addNode(Node* addNode);
+  void insertNode(Node* addNode, Node* closestNode);
+  void deleteNode(Node* delNode);
   void writeData(stringstream&);
   
 private:
@@ -125,9 +127,62 @@ void LinkedList::addNode(Node* addNode) {
   }
 }
 
-bool LinkedList::getNode(unsigned int accNum, Node* current) {
-  
+void LinkedList::insertNode(Node* addNode, Node* closestNode) {
+  if (closestNode->mAccNum > addNode->mAccNum) {
+    addNode->nextNode = closestNode;
+    addNode->prevNode = closestNode->prevNode;
+    addNode->prevNode->nextNode = addNode;
+    closestNode->prevNode = addNode;
+  }
+  else if(closestNode->mAccNum < addNode->mAccNum) {
+    addNode->prevNode = closestNode;
+    addNode->nextNode = closestNode->nextNode;
+    closestNode->nextNode = addNode;
+    addNode->nextNode->prevNode = addNode;
+  }
 }
+
+void LinkedList::deleteNode(Node* delNode) {
+  delNode->prevNode->nextNode = delNode->nextNode;
+  delNode->nextNode->prevNode = delNode->prevNode;
+  delete delNode;
+}
+
+bool LinkedList::getNode(unsigned int accNum, Node* current) {
+  bool success = false;
+  if (current->mAccNum == accNum) {
+    success = true;
+  }
+  else if (current->mAccNum < accNum) {
+    while(current != mHead) {
+      if(current->mAccNum == accNum) {
+        success = true;
+        break;
+      }
+      else if(current->mAccNum > accNum) {
+        success = false;
+        break;
+      }
+      current = current->nextNode;
+    }
+  }
+  else if (current->mAccNum > accNum) {
+    while(current != mHead) {
+      if(current->mAccNum == accNum) {
+        success = true;
+        break;
+      }
+      else if (current->mAccNum < accNum) {
+        success = false;
+        break;
+      }
+      current = current->prevNode;
+    }
+  }
+  return success;
+}
+
+
 
 
 

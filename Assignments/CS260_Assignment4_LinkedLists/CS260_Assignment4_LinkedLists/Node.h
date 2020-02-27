@@ -22,6 +22,8 @@ public:
   Node(unsigned int accNum, const string &fname, const string &lname, double accBalance)
   : mFname(fname), mLname(lname), mAccNum(accNum), mAccBalance(accBalance) {}
   
+  bool updateAccount(double transaction);
+  
   string mFname = "";
   string mLname = "";
   unsigned int mAccNum = 0;
@@ -29,5 +31,12 @@ public:
   Node* nextNode = this;
   Node* prevNode = this;
 };
+
+bool Node::updateAccount(double transaction) {
+  mAccBalance += transaction;
+  return mAccBalance > 0;
+}
+
+
 
 #endif /* NODE_H */
