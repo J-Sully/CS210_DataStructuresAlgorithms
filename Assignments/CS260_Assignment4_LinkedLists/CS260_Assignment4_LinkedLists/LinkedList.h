@@ -30,6 +30,7 @@ public:
   ~LinkedList();
   
   Node* getHead() const { return mHead; }
+  bool getNode(unsigned int accNum, Node* foundNode);
   void addNode(Node* addNode);
   void writeData(stringstream&);
   
@@ -124,7 +125,9 @@ void LinkedList::addNode(Node* addNode) {
   }
 }
 
-
+bool LinkedList::getNode(unsigned int accNum, Node* current) {
+  
+}
 
 
 

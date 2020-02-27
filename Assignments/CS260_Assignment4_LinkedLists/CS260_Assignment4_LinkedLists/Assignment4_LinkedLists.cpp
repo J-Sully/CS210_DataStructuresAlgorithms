@@ -60,16 +60,23 @@ bool logData(const string& filename, LinkedList* list, const int &opNumber, cons
   return success;
 }
 
-bool updateAccounts(const string& filename) {
+bool updateAccounts(const string& filename, LinkedList* list, Node* current) {
   ifstream fopenTrans(TRANSACTION_FILENAME);
   ofstream fLogData;
   unsigned int opNumber = 0;
   unsigned int accNum = 0;
-  string fname, lname = "";
+  double transaction = 0;
+  string fname, lname, op = "";
+  
   bool success = false;
   
   if(fopenTrans) {
-    
+    while(getline(fopenTrans,op)) {
+      if(parseOp(op, accNum, fname, lname, transaction)) {
+        opNumber++;
+        current =
+      }
+    }
   }
   
   return success;
