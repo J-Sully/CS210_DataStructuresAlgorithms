@@ -16,9 +16,7 @@
 #include <fstream>
 using namespace std;
 
-#include "Node.h"
-#include "LinkedList.h"
-//#include "TransactionHandler.h"
+#include "AccountManager.h"
 
 static const string MASTER_FILENAME = "master.txt";
 static const string TRANSACTION_FILENAME = "tran.txt";
@@ -33,6 +31,7 @@ bool parseOp(const string &op, unsigned int &accNum, string &fname,
   return ss.fail();
 }
 
+/*
 void updateAccounts(const string& transactionFilename, const string& logFilename, LinkedList &list) {
   ifstream fopenTrans(transactionFilename);
   ofstream flogUpdates(logFilename);
@@ -70,7 +69,23 @@ void updateAccounts(const string& transactionFilename, const string& logFilename
     }
   }
 }
+ */
 
+void RunTests() {
+  LinkedList list;
+  list.addNode(new Account(42, "John", "Smith", 5000));
+  list.addNode(new Account(42, "John", "Smith", 100));
+  list.addNode(new Account(2, "Jane", "Doe", 250));
+  list.addNode(new Account(4, "Mark", "Marduk", 50));
+  list.addNode(new Account(100, "Bill", "Briar", 10));
+  list.addNode(new Account(4, "Mark", "Marduk", 300));
+  
+  for (LinkedList::Node* current = list.getFirst(); current != list.getHead(); current = current->getNext()) {
+    Account* account = dynamic_cast<Account*>(current);
+    cout << account->getAccountNum() << ' ' << account->getFirstName() << ' '
+         << account->getLastName()   << ' ' << account->getBalance() << endl;
+  }
+}
 
 int main(int argc, const char * argv[]) {
   // programmer's identification
@@ -78,10 +93,13 @@ int main(int argc, const char * argv[]) {
   cout << "Programmer's ID: 1282151" << endl;
   cout << "File: " << __FILE__ << endl;
   
+  RunTests();
   
+  /*
   LinkedList list = LinkedList(MASTER_FILENAME);
   updateAccounts(TRANSACTION_FILENAME, LOG_FILENAME, list);
-  saveToFile(TEMP_NEWMASTER, list);
+  saveToFile(TEMP_NEWMASTER, list);*/
+  
   
   
   
