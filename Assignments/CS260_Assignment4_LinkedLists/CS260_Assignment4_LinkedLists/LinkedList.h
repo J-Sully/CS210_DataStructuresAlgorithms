@@ -115,6 +115,9 @@ bool LinkedList::findNodeAboveInstert(unsigned int accNum) {
       }
     }
   }
+  else {
+    return true;
+  }
   return false;
 }
 
