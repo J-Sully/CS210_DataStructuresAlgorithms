@@ -23,79 +23,53 @@ using namespace std;
 static const string MASTER_FILENAME = "master.txt";
 static const string TRANSACTION_FILENAME = "tran.txt";
 static const string LOG_FILENAME = "log.txt";
+static const string TEMP_NEWMASTER = "temp_master.txt";
 
 bool parseOp(const string &op, unsigned int &accNum, string &fname,
              string &lname, double &transaction) {
-  
   stringstream ss;
   ss.str(op);
   ss >> accNum >> fname >> lname >> transaction;
   return ss.fail();
 }
 
-bool logData(const string& filename, LinkedList* list, const int &opNumber = 0, const string &op = "") {
-  fstream fmanip(filename, ios::in | ios::app);
-  stringstream ss;
-  string test = "";
-  bool success = false;
-  
-  if(fmanip) {
-    success = true;
-    if (!getline(fmanip,test)) {
-      fmanip << "List at Start:" << endl;
-      list->writeData(ss);
-      fmanip << ss.str();
-    }
-    else {
-      fmanip << "Update #" << opNumber << endl;
-      fmanip << op << endl << endl;
-      fmanip << "List after Update #" << opNumber << ':' << endl;
-      list->writeData(ss);
-      fmanip << ss.str();
-    }
-  }
-  else {
-    success = false;
-  }
-  return success;
-}
-
-void updateAccounts(const string& filename, LinkedList* list, Node* current) {
-  ifstream fopenTrans(TRANSACTION_FILENAME);
-  ofstream fLogData;
+void updateAccounts(const string& transactionFilename, const string& logFilename, LinkedList &list) {
+  ifstream fopenTrans(transactionFilename);
+  ofstream flogUpdates(logFilename);
   unsigned int opNumber = 0;
   unsigned int accNum = 0;
   double transaction = 0;
   string fname, lname, op = "";
-  
-  logData(LOG_FILENAME, list);
-  if(fopenTrans) {
+  Node* current = list.getHead();
+
+  if(fopenTrans && flogUpdates) {
+    flogUpdates << "List at Start:" << endl;
+    list.writeToStream(flogUpdates);
+    
     while(getline(fopenTrans,op)) {
       if(parseOp(op, accNum, fname, lname, transaction)) {
         opNumber++;
-        if(list->getNode(accNum, current)) {
+        if(list.getNode(accNum, current)) {
           if (!current->updateAccount(transaction)) {
-            list->deleteNode(current);
-            current = list->getHead();
+            list.deleteNode(current);
+            current = list.getHead();
           }
         }
         else {
           Node* addNode = new Node(accNum, fname, lname, transaction);
           if (current->mAccBalance > 0) {
-            list->insertNode(addNode, current);
+            list.insertNode(addNode, current);
           }
         }
       }
       opNumber++;
-      logData(LOG_FILENAME, list, opNumber, op);
+      flogUpdates << "Update #" << opNumber << endl;
+      flogUpdates << op << endl << endl;
+      flogUpdates << "List after Update #" << opNumber << ':' << endl;
+      list.writeToStream(flogUpdates);
     }
   }
 }
-
-
-
-
-
 
 
 int main(int argc, const char * argv[]) {
@@ -105,8 +79,9 @@ int main(int argc, const char * argv[]) {
   cout << "File: " << __FILE__ << endl;
   
   
-  LinkedList* list = new LinkedList(MASTER_FILENAME);
-  Node* current = list->getHead();
+  LinkedList list = LinkedList(MASTER_FILENAME);
+  updateAccounts(TRANSACTION_FILENAME, LOG_FILENAME, list);
+  saveToFile(TEMP_NEWMASTER, list);
   
   
   

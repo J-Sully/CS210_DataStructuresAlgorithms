@@ -14,50 +14,57 @@
 #define LINKEDLIST_H
 
 #include <string>
-#include <sstream>
 #include <fstream>
 using namespace std;
 
 #include "Node.h"
 
-
-static const string TEMP_NEWMASTER = "temp_master.txt";
-
 class LinkedList {
 public:
-  LinkedList() {}
-  LinkedList(const string& filename) { loadData(filename); }
+  LinkedList() { init(); }
+  LinkedList(const string& filename) { loadFromFile(filename); }
   ~LinkedList();
   
   Node* getHead() const { return mHead; }
-  bool getNode(unsigned int accNum, Node* foundNode);
+  bool getNode(unsigned int accNum, Node* foundNode); // returns F if unable to find node
+  
   void addNode(Node* addNode);
   void insertNode(Node* addNode, Node* closestNode);
   void deleteNode(Node* delNode);
-  void writeData(stringstream&);
+  
+  void writeToStream(ostream&) const; // helper function to write out list data
+  bool saveToFile(const string& filename); // returns F if unable to open file
   
 private:
-  bool loadData(const string& filename);
-  bool saveData(const string& filename);
-  Node* mHead = new Node;
+  bool findNodeAboveInstert(unsigned int accNum);
+  bool loadFromFile(const string& filename); // returns F if unable to open file
+  void init(); // helper function to initialize mHead
+  Node* mHead = nullptr;
+  Node* mCurrent = nullptr;
   
 };
 
+void LinkedList::init() {
+  mHead = new Node;
+  mCurrent = mHead;
+}
+
 LinkedList::~LinkedList() {
   Node* nextNode = mHead->nextNode;
-  saveData(TEMP_NEWMASTER);
   while(nextNode != mHead) {
     delete nextNode->prevNode;
     nextNode = nextNode->nextNode;
-  }  
+  }
+  delete mHead;
 }
 
-bool LinkedList::loadData(const string& filename) {
+bool LinkedList::loadFromFile(const string& filename) {
   ifstream fopen(filename);
   string fname,lname = "";
   unsigned int accNum = 0;
   double accBalance = 0;
-  mHead = new Node;
+  
+  init();
 
   if(fopen) {
     while(fopen >> accNum >> fname >> lname >> accBalance) {
@@ -72,13 +79,11 @@ bool LinkedList::loadData(const string& filename) {
   }
 }
 
-bool LinkedList::saveData(const string& filename) {
+bool LinkedList::saveToFile(const string& filename) {
   ofstream fsave(filename);
-  stringstream ss;
   
   if(fsave) {
-    writeData(ss);
-    fsave << ss.str();
+    writeToStream(fsave);
     fsave.close();
     return true;
   }
@@ -87,15 +92,47 @@ bool LinkedList::saveData(const string& filename) {
   }
 }
 
-void LinkedList::writeData(stringstream& ss) {
-  Node *current = mHead->nextNode;
-  while (current != mHead) {
-    ss << current->mAccNum << ' ' << current->mFname << ' '
+void LinkedList::writeToStream(ostream& ostr) const {
+  for(Node* current = mHead->nextNode; current != mHead; current = current->nextNode) {
+    ostr << current->mAccNum << ' ' << current->mFname << ' '
     << current->mLname << ' ' << current->mAccBalance << endl;
+    current = current->nextNode;
   }
-  ss << endl;
 }
 
+bool LinkedList::findNodeAboveInstert(unsigned int accNum) {
+  if (mCurrent->mAccNum > accNum) {
+    while(mCurrent->mAccNum <= accNum || mCurrent != mHead) {
+      if (mCurrent->mAccNum == accNum) return true;
+      mCurrent = mCurrent->prevNode;
+    }
+  }
+  else if (mCurrent->mAccNum < accNum) {
+    while(mCurrent->mAccNum > accNum || mCurrent->nextNode == mHead) {
+      mCurrent = mCurrent->nextNode;
+      if (mCurrent->mAccNum == accNum) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+
+void LinkedList::insertNode(Node* addNode) {
+  if(findNodeAboveInstert(addNode->mAccNum)) {
+    mCurrent->combineAccounts(addNode);
+    return;
+  }
+  else {
+    addNode->prevNode = mCurrent;
+    addNode->nextNode = mCurrent->nextNode;
+    mCurrent->nextNode->prevNode = addNode;
+    mCurrent->nextNode = addNode;
+  }
+}
+
+/*
 void LinkedList::addNode(Node* addNode) {
   bool found = false;
   Node* current = mHead->nextNode;
@@ -127,6 +164,7 @@ void LinkedList::addNode(Node* addNode) {
   }
 }
 
+
 void LinkedList::insertNode(Node* addNode, Node* closestNode) {
   if (closestNode->mAccNum > addNode->mAccNum) {
     addNode->nextNode = closestNode;
@@ -141,6 +179,7 @@ void LinkedList::insertNode(Node* addNode, Node* closestNode) {
     addNode->nextNode->prevNode = addNode;
   }
 }
+*/
 
 void LinkedList::deleteNode(Node* delNode) {
   delNode->prevNode->nextNode = delNode->nextNode;
@@ -181,9 +220,4 @@ bool LinkedList::getNode(unsigned int accNum, Node* current) {
   }
   return success;
 }
-
-
-
-
-
 #endif /* LINKEDLIST_H */

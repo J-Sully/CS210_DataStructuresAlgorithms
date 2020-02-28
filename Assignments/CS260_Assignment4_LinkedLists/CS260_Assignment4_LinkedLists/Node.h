@@ -23,6 +23,7 @@ public:
   : mFname(fname), mLname(lname), mAccNum(accNum), mAccBalance(accBalance) {}
   
   bool updateAccount(double transaction);
+  bool combineAccounts(Node* addNode);
   
   string mFname = "";
   string mLname = "";
@@ -34,6 +35,20 @@ public:
 
 bool Node::updateAccount(double transaction) {
   mAccBalance += transaction;
+  return mAccBalance > 0;
+}
+
+bool Node::combineAccounts(Node* addNode) {
+  if (mLname >= addNode->mLname) {
+    mFname += " | " + addNode->mFname;
+    mLname += " | " + addNode->mLname;
+  }
+  else{
+    mFname = addNode->mFname + " | " + mFname;
+    mLname = addNode->mLname + " | " + mLname;
+  }
+  mAccBalance += addNode->mAccBalance;
+  delete addNode;
   return mAccBalance > 0;
 }
 
