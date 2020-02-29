@@ -27,7 +27,6 @@
 		42F7417D2405EFA300BC8C95 /* Assignment4_LinkedLists.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Assignment4_LinkedLists.cpp; sourceTree = "<group>"; };
 		42F741842405F0ED00BC8C95 /* Account.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Account.h; sourceTree = "<group>"; };
 		42F741852405F0FF00BC8C95 /* LinkedList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LinkedList.h; sourceTree = "<group>"; };
-		42F741862406F95D00BC8C95 /* TransactionHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TransactionHandler.h; sourceTree = "<group>"; };
 		F6ED8E8E2409B5A400A1DE24 /* AccountManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountManager.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -64,7 +63,6 @@
 				42F7417D2405EFA300BC8C95 /* Assignment4_LinkedLists.cpp */,
 				42F741842405F0ED00BC8C95 /* Account.h */,
 				42F741852405F0FF00BC8C95 /* LinkedList.h */,
-				42F741862406F95D00BC8C95 /* TransactionHandler.h */,
 				F6ED8E8E2409B5A400A1DE24 /* AccountManager.h */,
 			);
 			path = CS260_Assignment4_LinkedLists;
