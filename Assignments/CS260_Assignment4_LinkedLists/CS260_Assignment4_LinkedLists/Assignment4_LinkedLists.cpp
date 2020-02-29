@@ -12,7 +12,6 @@
 
 #include <iostream>
 #include <string>
-#include <sstream>
 #include <fstream>
 using namespace std;
 
@@ -23,53 +22,20 @@ static const string TRANSACTION_FILENAME = "tran.txt";
 static const string LOG_FILENAME = "log.txt";
 static const string TEMP_NEWMASTER = "temp_master.txt";
 
-bool parseOp(const string &op, unsigned int &accNum, string &fname,
-             string &lname, double &transaction) {
-  stringstream ss;
-  ss.str(op);
-  ss >> accNum >> fname >> lname >> transaction;
-  return ss.fail();
-}
+#if defined(WIN32) || defined(_WIN32)
+#define PATH_SEPARATOR "\\"
+#else
+#define PATH_SEPARATOR "/"
+#endif
 
-/*
-void updateAccounts(const string& transactionFilename, const string& logFilename, LinkedList &list) {
-  ifstream fopenTrans(transactionFilename);
-  ofstream flogUpdates(logFilename);
-  unsigned int opNumber = 0;
-  unsigned int accNum = 0;
-  double transaction = 0;
-  string fname, lname, op = "";
-  Node* current = list.getHead();
-
-  if(fopenTrans && flogUpdates) {
-    flogUpdates << "List at Start:" << endl;
-    list.writeToStream(flogUpdates);
-    
-    while(getline(fopenTrans,op)) {
-      if(parseOp(op, accNum, fname, lname, transaction)) {
-        opNumber++;
-        if(list.getNode(accNum, current)) {
-          if (!current->updateAccount(transaction)) {
-            list.deleteNode(current);
-            current = list.getHead();
-          }
-        }
-        else {
-          Node* addNode = new Node(accNum, fname, lname, transaction);
-          if (current->mAccBalance > 0) {
-            list.insertNode(addNode, current);
-          }
-        }
-      }
-      opNumber++;
-      flogUpdates << "Update #" << opNumber << endl;
-      flogUpdates << op << endl << endl;
-      flogUpdates << "List after Update #" << opNumber << ':' << endl;
-      list.writeToStream(flogUpdates);
-    }
-  }
-}
- */
+enum StatusCode {
+  STATUS_OK = 0,
+  ERR_LOG_FILE,
+  ERR_TRANS_FILE,
+  ERR_INPUT_ACCOUNTS,
+  ERR_OUTPUT_ACCOUNTS,
+  ERR_MEMORY_LEAK
+};
 
 void RunTests() {
   LinkedList list;
@@ -87,24 +53,59 @@ void RunTests() {
   }
 }
 
+int UpdateAccounts(const string& inputAccountsFile, const  string& outputAccountsFile, const string& transactionsFile, const string& logFile) {
+  ofstream log(logFile);
+  if (!log) {
+    cerr << "Unable to open log file: " << logFile << endl;
+    return ERR_LOG_FILE;
+  }
+  //ostream& log(cout); // debug; log to stdout for now instead of log file
+  
+  AccountManager manager;
+  if (!manager.loadFromFile(inputAccountsFile)) {
+    cerr << "Error while loading accounts file: " << inputAccountsFile << endl;
+    return ERR_INPUT_ACCOUNTS;
+  }
+  log << "List At Start:" << endl;
+  manager.writeToStream(log);
+  log << endl;
+  if (!manager.applyTransactions(transactionsFile, log)) {
+    cerr << "Error while processing transaction in file: " << transactionsFile << endl;
+    return ERR_TRANS_FILE;
+  }
+  if (!manager.saveToFile(outputAccountsFile)) {
+    cerr << "Error while saving accounts to file: " << outputAccountsFile << endl;
+    return ERR_OUTPUT_ACCOUNTS;
+  }
+  return STATUS_OK;
+}
+
 int main(int argc, const char * argv[]) {
   // programmer's identification
   cout << "Programmer: Jessica Sullivan" << endl;
   cout << "Programmer's ID: 1282151" << endl;
   cout << "File: " << __FILE__ << endl;
   
-  RunTests();
+  //RunTests();
   
-  /*
-  LinkedList list = LinkedList(MASTER_FILENAME);
-  updateAccounts(TRANSACTION_FILENAME, LOG_FILENAME, list);
-  saveToFile(TEMP_NEWMASTER, list);*/
+  string sourceFile(__FILE__);
+  string sourceDir;
+  size_t filePos = sourceFile.rfind(PATH_SEPARATOR);
+  if (filePos != string::npos) {
+    sourceDir = sourceFile.erase(filePos + 1, string::npos);
+  }
+  string inputAccountsFile(sourceDir + MASTER_FILENAME);
+  string outputAccountsFile(sourceDir + TEMP_NEWMASTER);
+  string transactionsFile(sourceDir + TRANSACTION_FILENAME);
+  string logFile(sourceDir + LOG_FILENAME);
+  int result = UpdateAccounts(inputAccountsFile, outputAccountsFile, transactionsFile, logFile);
+  // Sanity check that no node leaked
+  if (LinkedList::Node::sNumObjects != 0) {
+    cout << "Leaked nodes: " << LinkedList::Node::sNumObjects << endl;
+    result = ERR_MEMORY_LEAK;
+  }
   
-  
-  
-  
-  
-  return 0;
+  return result;
   
   
   

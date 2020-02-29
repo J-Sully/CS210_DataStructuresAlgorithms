@@ -48,18 +48,12 @@ bool Account::updateAccount(double transaction) {
 /*virtual */
 bool Account::merge(Node* otherNode) {
   Account* other = dynamic_cast<Account*>(otherNode);
-  if (mLname >= other->mLname) {
-    mFname += " | " + other->mFname;
-    mLname += " | " + other->mLname;
-  }
-  else{
-    mFname = other->mFname + " | " + mFname;
-    mLname = other->mLname + " | " + mLname;
+  if (mLname != other->mLname || mFname != other->mFname) {
+    cerr << "Warning: Transaction with mismatched account name:  '" << mFname << " " << mLname
+         << "' != '" << other->mFname << " " << other->mLname << "'" << endl;
   }
   mAccBalance += other->mAccBalance;
-  delete other;
-  return mAccBalance > 0;
+  return mAccBalance > 0.000001; // TODO: Use a const for this near-zero value.
 }
-
 
 #endif /* ACCOUNT_H */

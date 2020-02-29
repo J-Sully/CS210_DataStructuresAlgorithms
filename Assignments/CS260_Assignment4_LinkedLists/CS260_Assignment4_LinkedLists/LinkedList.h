@@ -24,9 +24,9 @@ public:
   
   class Node {
   public:
-    Node() {}
-    Node(unsigned int key) : mKey(key) {}
-    virtual ~Node() { unlink(); }
+    Node() { sNumObjects++; }
+    Node(unsigned int key) : mKey(key) { sNumObjects++; }
+    virtual ~Node() { unlink(); sNumObjects--; }
     
     unsigned int getKey() const { return mKey; }
     Node* getNext() { return mNextNode; }
@@ -35,6 +35,8 @@ public:
     virtual bool merge(Node* other) { return false; }
     void link(Node* next);
     void unlink();
+    
+    static int sNumObjects;  // Used to detect memory leaks
     
   private:
     unsigned int mKey = 0;
@@ -48,11 +50,10 @@ public:
 
   Node* getNode(unsigned int key); // returns nullptr if unable to find node
   
-  void addNode(Node* node);
-  void deleteNode(Node* node);
+  Node* addNode(Node* node);
+  void removeNode(Node* node);
   
 private:
-  void insertNode(Node* node);
   bool findClosestNode(unsigned int key);
   void init(); // helper function to initialize mHead
   Node* mHead = nullptr;
@@ -63,6 +64,8 @@ void LinkedList::init() {
   mHead = new LinkedList::Node();
   mCurrent = mHead;
 }
+
+/* static */ int LinkedList::Node::sNumObjects = 0;
 
 LinkedList::~LinkedList() {
   Node* nextNode = mHead->getNext();
@@ -99,13 +102,27 @@ bool LinkedList::findClosestNode(unsigned int key) {
   return mCurrent != mHead && mCurrent->getKey() == key;
 }
 
-void LinkedList::addNode(Node* node) {
+LinkedList::Node* LinkedList::addNode(Node* node) {
   if (findClosestNode(node->getKey())) {
     mCurrent->merge(node);
+    delete node;
+    return mCurrent;
   }
   else {
     node->link(mCurrent);
+    return node;
   }
+}
+
+void LinkedList::removeNode(Node* node) {
+  if (node == mHead) {
+    cerr << "Warning: Cannot remove head node!" << endl;
+    return;
+  }
+  if (mCurrent == node) {
+    mCurrent = mCurrent->getNext();
+  }
+  delete node;
 }
 
 LinkedList::Node* LinkedList::getNode(unsigned int key) {
