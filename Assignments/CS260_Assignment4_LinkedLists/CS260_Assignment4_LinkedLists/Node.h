@@ -39,13 +39,9 @@ bool Node::updateAccount(double transaction) {
 }
 
 bool Node::combineAccounts(Node* addNode) {
-  if (mLname >= addNode->mLname) {
-    mFname += " | " + addNode->mFname;
-    mLname += " | " + addNode->mLname;
-  }
-  else{
-    mFname = addNode->mFname + " | " + mFname;
-    mLname = addNode->mLname + " | " + mLname;
+  if (mFname != addNode->mFname || mLname != addNode->mLname) {
+    cerr << "Differing names on accounts - defaulting name to: " << mFname
+         << ' ' << mLname;
   }
   mAccBalance += addNode->mAccBalance;
   delete addNode;

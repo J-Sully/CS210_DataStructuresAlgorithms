@@ -80,14 +80,36 @@ int main(int argc, const char * argv[]) {
   
   stringstream ss;
   
-  LinkedList list;
-  list.writeToStream(ss);
-  cout << ss.str() << endl << endl;
-  
+  LinkedList list(TEMP_NEWMASTER);
+  list.writeToStream(cout);
+  list.addNode(new Node(5, "a", "b", 60));
+  list.writeToStream(cout);
+  list.addNode(new Node(12, "a", "d", 60));
+  list.writeToStream(cout);
+
+
+  /*
   list.addNode(new Node(10, "a", "b", 20));
-  list.writeToStream(ss);
-  cout << ss.str() << endl << endl;
+  list.writeToStream(cout);
+
   
+  list.addNode(new Node(5, "c", "d", 50));
+  list.writeToStream(cout);
+
+  
+  list.addNode(new Node(15, "c", "d", 50));
+  list.writeToStream(cout);
+
+  
+  list.addNode(new Node(1, "c", "d", 50));
+  list.writeToStream(cout);
+  
+  list.addNode(new Node(12, "c", "d", 50));
+  list.writeToStream(cout);
+  
+  list.saveToFile(TEMP_NEWMASTER);
+  
+*/
   
   
   

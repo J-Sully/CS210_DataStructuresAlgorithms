@@ -35,7 +35,7 @@ public:
   bool saveToFile(const string& filename); // returns F if unable to open file
   
 private:
-  bool findNodeAboveInstert(unsigned int accNum);
+  bool findNodeAboveInsert(unsigned int accNum);
   bool loadFromFile(const string& filename); // returns F if unable to open file
   void init(); // helper function to initialize mHead
   Node* mHead = nullptr;
@@ -95,15 +95,14 @@ void LinkedList::writeToStream(ostream& ostr) const {
   for(Node* current = mHead->nextNode; current != mHead; current = current->nextNode) {
     ostr << current->mAccNum << ' ' << current->mFname << ' '
     << current->mLname << ' ' << current->mAccBalance << endl;
-    current = current->nextNode;
   }
 }
 
-bool LinkedList::findNodeAboveInstert(unsigned int accNum) {
+bool LinkedList::findNodeAboveInsert(unsigned int accNum) {
   while(mCursor != mHead && mCursor->mAccNum > accNum) {
     mCursor = mCursor->prevNode;
   }
-  while(mCursor->nextNode != mHead && mCursor->nextNode->mAccNum < accNum) {
+  while(mCursor->nextNode != mHead && mCursor->nextNode->mAccNum <= accNum) {
     mCursor = mCursor->nextNode;
   }
   return mCursor->mAccNum == accNum;
@@ -111,7 +110,7 @@ bool LinkedList::findNodeAboveInstert(unsigned int accNum) {
 
 
 void LinkedList::addNode(Node* addNode) {
-  if(findNodeAboveInstert(addNode->mAccNum)) {
+  if(findNodeAboveInsert(addNode->mAccNum)) {
     mCursor->combineAccounts(addNode);
   }
   else {
@@ -130,7 +129,7 @@ void LinkedList::deleteNode(Node* delNode) {
 
 
 bool LinkedList::setCursor(unsigned int accNum) {
-  return findNodeAboveInstert(accNum);
+  return findNodeAboveInsert(accNum);
 }
 
 #endif /* LINKEDLIST_H */
