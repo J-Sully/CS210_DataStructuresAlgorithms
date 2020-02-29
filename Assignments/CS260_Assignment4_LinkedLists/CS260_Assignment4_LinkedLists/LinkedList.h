@@ -15,14 +15,15 @@
 
 #include <string>
 #include <fstream>
+#include <cfloat>
 using namespace std;
 
 #include "Node.h"
 
 class LinkedList {
 public:
-  LinkedList() { init();}
-  LinkedList(const string& filename) { loadFromFile(filename);}
+  LinkedList() { init(); }
+  LinkedList(const string& filename) { init(); loadFromFile(filename); }
   ~LinkedList();
   
   Node* getHead() const { return mHead; }
@@ -32,18 +33,19 @@ public:
   
   void writeToStream(ostream&) const; // helper function to write out list data
   bool saveToFile(const string& filename); // returns F if unable to open file
+  bool loadFromFile(const string& filename); // returns F if unable to open file
   
-  void updateAccount(unsigned int accNum, const string &fname, const string &lname, double transaction);
+  void updateAccount(long accNum, const string &fname, const string &lname, double transaction);
   
 private:
-  bool findNodeAboveInsert(unsigned int accNum);
-  bool loadFromFile(const string& filename); // returns F if unable to open file
-  void init(); // helper function to initialize mHead
+  bool findNodeAboveInsert(long accNum); // returns true if exact match accNum found
+  void init(); // shared/common constructor code
   Node* mHead = nullptr;
+  // "global" pointer
   Node* mCursor = nullptr;
-  
 };
 
+// shared/common constructor code
 void LinkedList::init() {
   mHead = new Node;
   mCursor = mHead;
@@ -51,7 +53,7 @@ void LinkedList::init() {
 
 LinkedList::~LinkedList() {
   Node* nextNode = mHead->nextNode;
-  while(nextNode != mHead) {
+  while (nextNode != mHead) {
     nextNode = nextNode->nextNode;
     delete nextNode->prevNode;
   }
@@ -61,10 +63,8 @@ LinkedList::~LinkedList() {
 bool LinkedList::loadFromFile(const string& filename) {
   ifstream fopen(filename);
   string fname,lname = "";
-  unsigned int accNum = 0;
+  long accNum = 0;
   double accBalance = 0;
-  
-  init();
 
   if (fopen) {
     while (fopen >> accNum >> fname >> lname >> accBalance) {
@@ -99,10 +99,12 @@ void LinkedList::writeToStream(ostream& ostr) const {
   }
 }
 
-bool LinkedList::findNodeAboveInsert(unsigned int accNum) {
+bool LinkedList::findNodeAboveInsert(long accNum) {
+  // move upwards list until found or head
   while (mCursor != mHead && mCursor->mAccNum > accNum) {
     mCursor = mCursor->prevNode;
   }
+  // move downwards list until found or head
   while (mCursor->nextNode != mHead && mCursor->nextNode->mAccNum <= accNum) {
     mCursor = mCursor->nextNode;
   }
@@ -111,10 +113,12 @@ bool LinkedList::findNodeAboveInsert(unsigned int accNum) {
 
 
 void LinkedList::addNode(Node* addNode) {
+  // move cursor - if match combine
   if (findNodeAboveInsert(addNode->mAccNum)) {
     mCursor->combineAccounts(addNode);
     delete addNode;
   }
+  // else make new account at cursor position
   else {
     addNode->prevNode = mCursor;
     addNode->nextNode = mCursor->nextNode;
@@ -124,18 +128,21 @@ void LinkedList::addNode(Node* addNode) {
 }
 
 void LinkedList::deleteNode(Node* delNode) {
-  mCursor = mHead;
-  delete delNode;
+  mCursor = mHead; // move cursor in case it points at delNode
+  delete delNode; // unlinking in destructor
 }
 
-void LinkedList::updateAccount(unsigned int accNum, const string &fname, const string &lname, double transaction) {
+void LinkedList::updateAccount(long accNum, const string &fname, const string &lname, double transaction) {
+  // move cursor - if found update account
   if(findNodeAboveInsert(accNum)) {
+    // if updated account balance <= 0 delete
     if(!mCursor->updateAccount(transaction)) {
       deleteNode(mCursor);
     }
   }
+  // else add new account only if transaction > 0
   else {
-    if (transaction > 0) {
+    if (transaction >= DBL_EPSILON) {
       addNode(new Node(accNum, fname, lname, transaction));
     }
   }

@@ -18,40 +18,65 @@ using namespace std;
 
 #include "Node.h"
 #include "LinkedList.h"
-//#include "TransactionHandler.h"
 
 static const string MASTER_FILENAME = "master.txt";
 static const string TRANSACTION_FILENAME = "tran.txt";
 static const string LOG_FILENAME = "log.txt";
-static const string TEMP_NEWMASTER = "temp_master.txt";
+static const string NEWMASTER = "newmaster.txt";
 
+enum StatusCode {
+  STATUS_OK = 0,
+  ERR_MEMLEAK,
+  ERR_FAILOPENMASTER,
+  ERR_FAILOPENLOGTRANS,
+  ERR_FAILOPENNEWMASTER
+};
 
-bool parseOp(const string &op, unsigned int &accNum, string &fname,
+// parses an op line into accNum, fname, lname, and transaction amount
+bool parseOp(const string &op, long &accNum, string &fname,
              string &lname, double &transaction) {
+  
   stringstream ss;
   ss.str(op);
   ss >> accNum >> fname >> lname >> transaction;
+  
   return !ss.fail();
 }
 
-void updateAccounts(const string& transactionFilename,
+// takes transaction lines from a file, updates account, and logs changes - returns false if fail to open file
+bool applyTransactions(const string& transactionFilename,
                     const string& logFilename, LinkedList &list) {
+  
   ifstream fopenTrans(transactionFilename);
   ofstream flogUpdates(logFilename);
+  
   unsigned int opNumber = 0;
-  unsigned int accNum = 0;
+  long accNum = 0;
   double transaction = 0;
+  
   string fname, lname, op = "";
 
-  if(fopenTrans && flogUpdates) {
+  //checks if files opened properly or write error message
+  if (fopenTrans && flogUpdates) {
+    
     flogUpdates << "List At Start:" << endl;
     list.writeToStream(flogUpdates);
     
-    while(getline(fopenTrans,op)) {
-      if(parseOp(op, accNum, fname, lname, transaction)) {
+    while (getline(fopenTrans,op)) {
+      
+      opNumber++;
+      
+      // check if line parsed correctly or write error message
+      if (parseOp(op, accNum, fname, lname, transaction)) {
         list.updateAccount(accNum, fname, lname, transaction);
       }
-      opNumber++;
+      else {
+        stringstream ss;
+        ss << "Error running operation " << opNumber << ": " << op << endl;
+        flogUpdates << ss.str();
+        cerr << ss.str();
+        continue;
+      }
       flogUpdates << endl << "Update #" << opNumber << endl;
       flogUpdates << op << endl << endl;
       flogUpdates << "List After Update #" << opNumber << ':' << endl;
@@ -60,11 +85,37 @@ void updateAccounts(const string& transactionFilename,
   }
   else {
     cerr << "Error: could not open file(s)" << endl;
+    return false;
   }
+  return true;
 }
 
-void Test() {
-  LinkedList list(TEMP_NEWMASTER);
+// function to run application
+int runApplication() {
+  LinkedList list;
+  if (!list.loadFromFile(MASTER_FILENAME)) {
+    return ERR_FAILOPENMASTER;
+  }
+  if (!applyTransactions(TRANSACTION_FILENAME, LOG_FILENAME, list)) {
+    return ERR_FAILOPENLOGTRANS;
+  }
+  if (!list.saveToFile(NEWMASTER)) {
+    return ERR_FAILOPENNEWMASTER;
+  }
+  return 0; // can add errors for previous functions later
+}
+
+// returns true if memory leak
+bool testMemoryLeak() {
+  if (Node::sNumObjects != 0) {
+    cerr << "Num leaked nodes: " << Node::sNumObjects << endl;
+    return true;
+  }
+  return false;
+}
+
+void runTests() {
+  LinkedList list;
   list.writeToStream(cout);
   list.addNode(new Node(5, "a", "b", 60));
   list.writeToStream(cout);
@@ -72,30 +123,18 @@ void Test() {
   list.writeToStream(cout);
 }
 
-void runApplication() {
-  LinkedList list(MASTER_FILENAME);
-  updateAccounts(TRANSACTION_FILENAME, LOG_FILENAME, list);
-  list.saveToFile(TEMP_NEWMASTER);
-}
-
 int main(int argc, const char * argv[]) {
+  
   // programmer's identification
   cout << "Programmer: Jessica Sullivan" << endl;
   cout << "Programmer's ID: 1282151" << endl;
   cout << "File: " << __FILE__ << endl;
   
-  runApplication();
+  //runTests();
   
-  if (Node::sNumObjects != 0) {
-    cerr << "Num leaked nodes: " << Node::sNumObjects << endl;
-    return 1;
-  }
-
+  int result = runApplication();
   
+  if (testMemoryLeak()) return ERR_MEMLEAK;
   
-  
-  return 0;
-  
-  
-  
+  return result;
 }

@@ -14,14 +14,15 @@
 #define NODE_H
 
 #include <string>
+#include <cfloat>
 using namespace std;
 
 struct Node {
 public:
-  Node(){sNumObjects++;};
-  Node(unsigned int accNum, const string &fname, const string &lname,
-       double accBalance)
-  : mFname(fname), mLname(lname), mAccNum(accNum), mAccBalance(accBalance) {sNumObjects++;}
+  Node() { sNumObjects++; }; // update memory leak tracking number
+  Node(long accNum, const string &fname, const string &lname, double accBalance)
+  : mFname(fname), mLname(lname), mAccNum(accNum), mAccBalance(accBalance)
+  { sNumObjects++; } // update memory leak tracking number
   ~Node();
   
   bool updateAccount(double transaction); //returns false if balance <= 0
@@ -31,28 +32,33 @@ public:
   
   string mFname = "";
   string mLname = "";
-  unsigned int mAccNum = 0;
+  long mAccNum = 0;
   double mAccBalance = 0;
   Node* nextNode = this;
   Node* prevNode = this;
 };
 
-//static - keeps track of number of instances to check for memory leak
+// static - keeps track of number of instances to check for memory leak
 int Node::sNumObjects = 0;
 
 Node::~Node() {
+  // unlink node
   nextNode->prevNode = prevNode;
   prevNode->nextNode = nextNode;
   prevNode = this;
   nextNode = this;
+  
+  // update memory leak tracking number
   sNumObjects--;
 }
 
+// returns false if balance <= 0
 bool Node::updateAccount(double transaction) {
   mAccBalance += transaction;
-  return mAccBalance > 0;
+  return mAccBalance >= DBL_EPSILON;
 }
 
+// returns false if balance <= 0
 bool Node::combineAccounts(Node* addNode) {
   if (mFname != addNode->mFname || mLname != addNode->mLname) {
     cerr << "Differing names on accounts - defaulting name to: " << mFname
