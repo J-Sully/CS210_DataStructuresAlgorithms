@@ -26,10 +26,9 @@ public:
   ~LinkedList();
   
   Node* getHead() const { return mHead; }
-  bool getNode(unsigned int accNum, Node* foundNode); // returns F if unable to find node
+  bool setCursor(unsigned int accNum); // returns F if unable to find node
   
   void addNode(Node* addNode);
-  void insertNode(Node* addNode, Node* closestNode);
   void deleteNode(Node* delNode);
   
   void writeToStream(ostream&) const; // helper function to write out list data
@@ -40,20 +39,20 @@ private:
   bool loadFromFile(const string& filename); // returns F if unable to open file
   void init(); // helper function to initialize mHead
   Node* mHead = nullptr;
-  Node* mCurrent = nullptr;
+  Node* mCursor = nullptr;
   
 };
 
 void LinkedList::init() {
   mHead = new Node;
-  mCurrent = mHead;
+  mCursor = mHead;
 }
 
 LinkedList::~LinkedList() {
   Node* nextNode = mHead->nextNode;
   while(nextNode != mHead) {
-    delete nextNode->prevNode;
     nextNode = nextNode->nextNode;
+    delete nextNode->prevNode;
   }
   delete mHead;
 }
@@ -101,88 +100,27 @@ void LinkedList::writeToStream(ostream& ostr) const {
 }
 
 bool LinkedList::findNodeAboveInstert(unsigned int accNum) {
-  if (mCurrent->mAccNum > accNum) {
-    while(mCurrent->mAccNum <= accNum || mCurrent != mHead) {
-      if (mCurrent->mAccNum == accNum) return true;
-      mCurrent = mCurrent->prevNode;
-    }
+  while(mCursor != mHead && mCursor->mAccNum > accNum) {
+    mCursor = mCursor->prevNode;
   }
-  else if (mCurrent->mAccNum < accNum) {
-    while(mCurrent->mAccNum > accNum || mCurrent->nextNode == mHead) {
-      mCurrent = mCurrent->nextNode;
-      if (mCurrent->mAccNum == accNum) {
-        return true;
-      }
-    }
+  while(mCursor->nextNode != mHead && mCursor->nextNode->mAccNum < accNum) {
+    mCursor = mCursor->nextNode;
   }
-  else {
-    return true;
-  }
-  return false;
+  return mCursor->mAccNum == accNum;
 }
 
 
-void LinkedList::insertNode(Node* addNode) {
-  if(findNodeAboveInstert(addNode->mAccNum)) {
-    mCurrent->combineAccounts(addNode);
-    return;
-  }
-  else {
-    addNode->prevNode = mCurrent;
-    addNode->nextNode = mCurrent->nextNode;
-    mCurrent->nextNode->prevNode = addNode;
-    mCurrent->nextNode = addNode;
-  }
-}
-
-/*
 void LinkedList::addNode(Node* addNode) {
-  bool found = false;
-  Node* current = mHead->nextNode;
-  if (mHead->nextNode == mHead) { // empty list
-    mHead->nextNode = addNode;
-    mHead->prevNode = addNode;
-    addNode->nextNode = mHead;
-    addNode->prevNode = mHead;
+  if(findNodeAboveInstert(addNode->mAccNum)) {
+    mCursor->combineAccounts(addNode);
   }
   else {
-    while (current->nextNode != mHead) {
-      if (current->mAccNum < addNode->mAccNum
-          && current->nextNode->mAccNum > addNode->mAccNum) {
-        addNode->nextNode = current->nextNode;
-        addNode->prevNode = current;
-        current->nextNode->prevNode = addNode;
-        current->nextNode = addNode;
-        found = true;
-        break;
-      }
-      if (!found) {
-        current->nextNode = addNode;
-        mHead->prevNode = addNode;
-        addNode->nextNode = mHead;
-        addNode->prevNode = current;
-        
-      }
-    }
+    addNode->prevNode = mCursor;
+    addNode->nextNode = mCursor->nextNode;
+    mCursor->nextNode->prevNode = addNode;
+    mCursor->nextNode = addNode;
   }
 }
-
-
-void LinkedList::insertNode(Node* addNode, Node* closestNode) {
-  if (closestNode->mAccNum > addNode->mAccNum) {
-    addNode->nextNode = closestNode;
-    addNode->prevNode = closestNode->prevNode;
-    addNode->prevNode->nextNode = addNode;
-    closestNode->prevNode = addNode;
-  }
-  else if(closestNode->mAccNum < addNode->mAccNum) {
-    addNode->prevNode = closestNode;
-    addNode->nextNode = closestNode->nextNode;
-    closestNode->nextNode = addNode;
-    addNode->nextNode->prevNode = addNode;
-  }
-}
-*/
 
 void LinkedList::deleteNode(Node* delNode) {
   delNode->prevNode->nextNode = delNode->nextNode;
@@ -190,37 +128,9 @@ void LinkedList::deleteNode(Node* delNode) {
   delete delNode;
 }
 
-bool LinkedList::getNode(unsigned int accNum, Node* current) {
-  bool success = false;
-  if (current->mAccNum == accNum) {
-    success = true;
-  }
-  else if (current->mAccNum < accNum) {
-    while(current != mHead) {
-      if(current->mAccNum == accNum) {
-        success = true;
-        break;
-      }
-      else if(current->mAccNum > accNum) {
-        success = false;
-        break;
-      }
-      current = current->nextNode;
-    }
-  }
-  else if (current->mAccNum > accNum) {
-    while(current != mHead) {
-      if(current->mAccNum == accNum) {
-        success = true;
-        break;
-      }
-      else if (current->mAccNum < accNum) {
-        success = false;
-        break;
-      }
-      current = current->prevNode;
-    }
-  }
-  return success;
+
+bool LinkedList::setCursor(unsigned int accNum) {
+  return findNodeAboveInstert(accNum);
 }
+
 #endif /* LINKEDLIST_H */

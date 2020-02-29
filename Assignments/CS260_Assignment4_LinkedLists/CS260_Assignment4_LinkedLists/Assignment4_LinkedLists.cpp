@@ -25,6 +25,7 @@ static const string TRANSACTION_FILENAME = "tran.txt";
 static const string LOG_FILENAME = "log.txt";
 static const string TEMP_NEWMASTER = "temp_master.txt";
 
+/*
 bool parseOp(const string &op, unsigned int &accNum, string &fname,
              string &lname, double &transaction) {
   stringstream ss;
@@ -40,7 +41,6 @@ void updateAccounts(const string& transactionFilename, const string& logFilename
   unsigned int accNum = 0;
   double transaction = 0;
   string fname, lname, op = "";
-  Node* current = list.getHead();
 
   if(fopenTrans && flogUpdates) {
     flogUpdates << "List at Start:" << endl;
@@ -49,7 +49,7 @@ void updateAccounts(const string& transactionFilename, const string& logFilename
     while(getline(fopenTrans,op)) {
       if(parseOp(op, accNum, fname, lname, transaction)) {
         opNumber++;
-        if(list.getNode(accNum, current)) {
+        if(list.setCurrent(accNum)) {
           if (!current->updateAccount(transaction)) {
             list.deleteNode(current);
             current = list.getHead();
@@ -58,7 +58,7 @@ void updateAccounts(const string& transactionFilename, const string& logFilename
         else {
           Node* addNode = new Node(accNum, fname, lname, transaction);
           if (current->mAccBalance > 0) {
-            list.insertNode(addNode, current);
+            list.addNode(addNode);
           }
         }
       }
@@ -71,17 +71,22 @@ void updateAccounts(const string& transactionFilename, const string& logFilename
   }
 }
 
-
+*/
 int main(int argc, const char * argv[]) {
   // programmer's identification
   cout << "Programmer: Jessica Sullivan" << endl;
   cout << "Programmer's ID: 1282151" << endl;
   cout << "File: " << __FILE__ << endl;
   
+  stringstream ss;
   
-  LinkedList list = LinkedList(MASTER_FILENAME);
-  updateAccounts(TRANSACTION_FILENAME, LOG_FILENAME, list);
-  saveToFile(TEMP_NEWMASTER, list);
+  LinkedList list;
+  list.writeToStream(ss);
+  cout << ss.str() << endl << endl;
+  
+  list.addNode(new Node(10, "a", "b", 20));
+  list.writeToStream(ss);
+  cout << ss.str() << endl << endl;
   
   
   
