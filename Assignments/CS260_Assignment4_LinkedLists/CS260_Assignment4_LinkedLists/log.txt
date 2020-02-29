@@ -1,0 +1,179 @@
+List At Start:
+10203 Mindy Ho 2000
+12345 Jeff Lee 211.22
+14142 James Bond 1500
+20103 Ed Sullivan 3000
+22345 Norma Patel 2496.24
+27183 Teresa Wong 1234.56
+30102 Ray Baldwin 3824.36
+30201 Susan Woo 9646.75
+31456 Jack Smith 1200
+31623 Norris Hunt 1500
+
+Update #1
+31623 Norris Hunt -1500.00
+
+List After Update #1:
+10203 Mindy Ho 2000
+12345 Jeff Lee 211.22
+14142 James Bond 1500
+20103 Ed Sullivan 3000
+22345 Norma Patel 2496.24
+27183 Teresa Wong 1234.56
+30102 Ray Baldwin 3824.36
+30201 Susan Woo 9646.75
+31456 Jack Smith 1200
+
+Update #2
+20301 Joe Hammil +500.00
+
+List After Update #2:
+10203 Mindy Ho 2000
+12345 Jeff Lee 211.22
+14142 James Bond 1500
+20103 Ed Sullivan 3000
+20301 Joe Hammil 500
+22345 Norma Patel 2496.24
+27183 Teresa Wong 1234.56
+30102 Ray Baldwin 3824.36
+30201 Susan Woo 9646.75
+31456 Jack Smith 1200
+
+Update #3
+31416 Becky Wu +100.00
+
+List After Update #3:
+10203 Mindy Ho 2000
+12345 Jeff Lee 211.22
+14142 James Bond 1500
+20103 Ed Sullivan 3000
+20301 Joe Hammil 500
+22345 Norma Patel 2496.24
+27183 Teresa Wong 1234.56
+30102 Ray Baldwin 3824.36
+30201 Susan Woo 9646.75
+31416 Becky Wu 100
+31456 Jack Smith 1200
+
+Update #4
+10203 Mindy Ho -2000.00
+
+List After Update #4:
+12345 Jeff Lee 211.22
+14142 James Bond 1500
+20103 Ed Sullivan 3000
+20301 Joe Hammil 500
+22345 Norma Patel 2496.24
+27183 Teresa Wong 1234.56
+30102 Ray Baldwin 3824.36
+30201 Susan Woo 9646.75
+31416 Becky Wu 100
+31456 Jack Smith 1200
+
+Update #5
+14142 James Bond +1500.00
+
+List After Update #5:
+12345 Jeff Lee 211.22
+14142 James Bond 3000
+20103 Ed Sullivan 3000
+20301 Joe Hammil 500
+22345 Norma Patel 2496.24
+27183 Teresa Wong 1234.56
+30102 Ray Baldwin 3824.36
+30201 Susan Woo 9646.75
+31416 Becky Wu 100
+31456 Jack Smith 1200
+
+Update #6
+27183 Teresa Wong -1234.56
+
+List After Update #6:
+12345 Jeff Lee 211.22
+14142 James Bond 3000
+20103 Ed Sullivan 3000
+20301 Joe Hammil 500
+22345 Norma Patel 2496.24
+30102 Ray Baldwin 3824.36
+30201 Susan Woo 9646.75
+31416 Becky Wu 100
+31456 Jack Smith 1200
+
+Update #7
+10101 Judy Malik +1000.00
+
+List After Update #7:
+10101 Judy Malik 1000
+12345 Jeff Lee 211.22
+14142 James Bond 3000
+20103 Ed Sullivan 3000
+20301 Joe Hammil 500
+22345 Norma Patel 2496.24
+30102 Ray Baldwin 3824.36
+30201 Susan Woo 9646.75
+31416 Becky Wu 100
+31456 Jack Smith 1200
+
+Update #8
+31416 Becky Wu  +100.00
+
+List After Update #8:
+10101 Judy Malik 1000
+12345 Jeff Lee 211.22
+14142 James Bond 3000
+20103 Ed Sullivan 3000
+20301 Joe Hammil 500
+22345 Norma Patel 2496.24
+30102 Ray Baldwin 3824.36
+30201 Susan Woo 9646.75
+31416 Becky Wu 200
+31456 Jack Smith 1200
+
+Update #9
+32123 John Doe +900.00
+
+List After Update #9:
+10101 Judy Malik 1000
+12345 Jeff Lee 211.22
+14142 James Bond 3000
+20103 Ed Sullivan 3000
+20301 Joe Hammil 500
+22345 Norma Patel 2496.24
+30102 Ray Baldwin 3824.36
+30201 Susan Woo 9646.75
+31416 Becky Wu 200
+31456 Jack Smith 1200
+32123 John Doe 900
+
+Update #10
+10101 Judy Malik -200.00
+
+List After Update #10:
+10101 Judy Malik 800
+12345 Jeff Lee 211.22
+14142 James Bond 3000
+20103 Ed Sullivan 3000
+20301 Joe Hammil 500
+22345 Norma Patel 2496.24
+30102 Ray Baldwin 3824.36
+30201 Susan Woo 9646.75
+31416 Becky Wu 200
+31456 Jack Smith 1200
+32123 John Doe 900
+
+Update #11
+22222 Joanne Doe +2750.02
+
+List After Update #11:
+10101 Judy Malik 800
+12345 Jeff Lee 211.22
+14142 James Bond 3000
+20103 Ed Sullivan 3000
+20301 Joe Hammil 500
+22222 Joanne Doe 2750.02
+22345 Norma Patel 2496.24
+30102 Ray Baldwin 3824.36
+30201 Susan Woo 9646.75
+31416 Becky Wu 200
+31456 Jack Smith 1200
+32123 John Doe 900
