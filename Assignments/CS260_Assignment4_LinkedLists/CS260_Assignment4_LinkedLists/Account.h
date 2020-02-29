@@ -23,9 +23,6 @@ public:
   Account(){};
   Account(unsigned int accNum, const string &fname, const string &lname, double accBalance)
   : Node(accNum), mFname(fname), mLname(lname), mAccBalance(accBalance) {}
-  
-  bool updateAccount(double transaction);
-  bool combineAccounts(Node* addNode);
 
   virtual bool merge(Node*);
   
@@ -39,11 +36,6 @@ private:
   string mLname = "";
   double mAccBalance = 0;
 };
-
-bool Account::updateAccount(double transaction) {
-  mAccBalance += transaction;
-  return mAccBalance > 0;
-}
 
 /*virtual */
 bool Account::merge(Node* otherNode) {
