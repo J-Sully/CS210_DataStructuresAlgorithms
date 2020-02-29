@@ -18,12 +18,16 @@ using namespace std;
 
 struct Node {
 public:
-  Node(){};
-  Node(unsigned int accNum, const string &fname, const string &lname, double accBalance)
-  : mFname(fname), mLname(lname), mAccNum(accNum), mAccBalance(accBalance) {}
+  Node(){sNumObjects++;};
+  Node(unsigned int accNum, const string &fname, const string &lname,
+       double accBalance)
+  : mFname(fname), mLname(lname), mAccNum(accNum), mAccBalance(accBalance) {sNumObjects++;}
+  ~Node();
   
-  bool updateAccount(double transaction);
-  bool combineAccounts(Node* addNode);
+  bool updateAccount(double transaction); //returns false if balance <= 0
+  bool combineAccounts(Node* addNode); //returns false if balance <= 0
+  
+  static int sNumObjects;
   
   string mFname = "";
   string mLname = "";
@@ -33,6 +37,17 @@ public:
   Node* prevNode = this;
 };
 
+//static - keeps track of number of instances to check for memory leak
+int Node::sNumObjects = 0;
+
+Node::~Node() {
+  nextNode->prevNode = prevNode;
+  prevNode->nextNode = nextNode;
+  prevNode = this;
+  nextNode = this;
+  sNumObjects--;
+}
+
 bool Node::updateAccount(double transaction) {
   mAccBalance += transaction;
   return mAccBalance > 0;
@@ -41,13 +56,9 @@ bool Node::updateAccount(double transaction) {
 bool Node::combineAccounts(Node* addNode) {
   if (mFname != addNode->mFname || mLname != addNode->mLname) {
     cerr << "Differing names on accounts - defaulting name to: " << mFname
-         << ' ' << mLname;
+         << ' ' << mLname << endl;
   }
-  mAccBalance += addNode->mAccBalance;
-  delete addNode;
-  return mAccBalance > 0;
+  return updateAccount(addNode->mAccBalance);
 }
-
-
 
 #endif /* NODE_H */

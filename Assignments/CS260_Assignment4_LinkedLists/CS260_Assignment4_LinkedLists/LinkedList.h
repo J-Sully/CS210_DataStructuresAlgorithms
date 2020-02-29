@@ -21,18 +21,19 @@ using namespace std;
 
 class LinkedList {
 public:
-  LinkedList() { init(); }
-  LinkedList(const string& filename) { loadFromFile(filename); }
+  LinkedList() { init();}
+  LinkedList(const string& filename) { loadFromFile(filename);}
   ~LinkedList();
   
   Node* getHead() const { return mHead; }
-  bool setCursor(unsigned int accNum); // returns F if unable to find node
   
   void addNode(Node* addNode);
   void deleteNode(Node* delNode);
   
   void writeToStream(ostream&) const; // helper function to write out list data
   bool saveToFile(const string& filename); // returns F if unable to open file
+  
+  void updateAccount(unsigned int accNum, const string &fname, const string &lname, double transaction);
   
 private:
   bool findNodeAboveInsert(unsigned int accNum);
@@ -65,8 +66,8 @@ bool LinkedList::loadFromFile(const string& filename) {
   
   init();
 
-  if(fopen) {
-    while(fopen >> accNum >> fname >> lname >> accBalance) {
+  if (fopen) {
+    while (fopen >> accNum >> fname >> lname >> accBalance) {
       Node *newNode = new Node(accNum, fname, lname, accBalance);
       addNode(newNode);
     }
@@ -81,7 +82,7 @@ bool LinkedList::loadFromFile(const string& filename) {
 bool LinkedList::saveToFile(const string& filename) {
   ofstream fsave(filename);
   
-  if(fsave) {
+  if (fsave) {
     writeToStream(fsave);
     fsave.close();
     return true;
@@ -92,26 +93,27 @@ bool LinkedList::saveToFile(const string& filename) {
 }
 
 void LinkedList::writeToStream(ostream& ostr) const {
-  for(Node* current = mHead->nextNode; current != mHead; current = current->nextNode) {
+  for (Node* current = mHead->nextNode; current != mHead; current = current->nextNode) {
     ostr << current->mAccNum << ' ' << current->mFname << ' '
     << current->mLname << ' ' << current->mAccBalance << endl;
   }
 }
 
 bool LinkedList::findNodeAboveInsert(unsigned int accNum) {
-  while(mCursor != mHead && mCursor->mAccNum > accNum) {
+  while (mCursor != mHead && mCursor->mAccNum > accNum) {
     mCursor = mCursor->prevNode;
   }
-  while(mCursor->nextNode != mHead && mCursor->nextNode->mAccNum <= accNum) {
+  while (mCursor->nextNode != mHead && mCursor->nextNode->mAccNum <= accNum) {
     mCursor = mCursor->nextNode;
   }
-  return mCursor->mAccNum == accNum;
+  return mCursor != mHead && mCursor->mAccNum == accNum;
 }
 
 
 void LinkedList::addNode(Node* addNode) {
-  if(findNodeAboveInsert(addNode->mAccNum)) {
+  if (findNodeAboveInsert(addNode->mAccNum)) {
     mCursor->combineAccounts(addNode);
+    delete addNode;
   }
   else {
     addNode->prevNode = mCursor;
@@ -122,14 +124,21 @@ void LinkedList::addNode(Node* addNode) {
 }
 
 void LinkedList::deleteNode(Node* delNode) {
-  delNode->prevNode->nextNode = delNode->nextNode;
-  delNode->nextNode->prevNode = delNode->prevNode;
+  mCursor = mHead;
   delete delNode;
 }
 
-
-bool LinkedList::setCursor(unsigned int accNum) {
-  return findNodeAboveInsert(accNum);
+void LinkedList::updateAccount(unsigned int accNum, const string &fname, const string &lname, double transaction) {
+  if(findNodeAboveInsert(accNum)) {
+    if(!mCursor->updateAccount(transaction)) {
+      deleteNode(mCursor);
+    }
+  }
+  else {
+    if (transaction > 0) {
+      addNode(new Node(accNum, fname, lname, transaction));
+    }
+  }
 }
 
 #endif /* LINKEDLIST_H */
