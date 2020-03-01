@@ -34,6 +34,35 @@ enum StatusCode {
 
 // parses an op line into accNum, fname, lname, and transaction amount
 bool parseOp(const string &op, long &accNum, string &fname,
+             string &lname, double &transaction);
+// takes transaction lines from a file, updates account, and logs changes - returns false if fail to open file
+bool applyTransactions(const string& transactionFilename,
+                       const string& logFilename, LinkedList &list);
+// function to run application
+int runApplication();
+// returns true if memory leak
+bool testMemoryLeak();
+void runTests();
+
+
+int main(int argc, const char * argv[]) {
+  
+  // programmer's identification
+  cout << "Programmer: Jessica Sullivan" << endl;
+  cout << "Programmer's ID: 1282151" << endl;
+  cout << "File: " << __FILE__ << endl;
+  
+  //runTests();
+  
+  int result = runApplication();
+  
+  if (testMemoryLeak()) return ERR_MEMLEAK;
+  
+  return result;
+}
+
+// parses an op line into accNum, fname, lname, and transaction amount
+bool parseOp(const string &op, long &accNum, string &fname,
              string &lname, double &transaction) {
   
   stringstream ss;
@@ -45,7 +74,7 @@ bool parseOp(const string &op, long &accNum, string &fname,
 
 // takes transaction lines from a file, updates account, and logs changes - returns false if fail to open file
 bool applyTransactions(const string& transactionFilename,
-                    const string& logFilename, LinkedList &list) {
+                       const string& logFilename, LinkedList &list) {
   
   ifstream fopenTrans(transactionFilename);
   ofstream flogUpdates(logFilename);
@@ -55,7 +84,7 @@ bool applyTransactions(const string& transactionFilename,
   double transaction = 0;
   
   string fname, lname, op = "";
-
+  
   //checks if files opened properly or write error message
   if (fopenTrans && flogUpdates) {
     
@@ -121,20 +150,4 @@ void runTests() {
   list.writeToStream(cout);
   list.addNode(new Node(12, "a", "d", 60));
   list.writeToStream(cout);
-}
-
-int main(int argc, const char * argv[]) {
-  
-  // programmer's identification
-  cout << "Programmer: Jessica Sullivan" << endl;
-  cout << "Programmer's ID: 1282151" << endl;
-  cout << "File: " << __FILE__ << endl;
-  
-  //runTests();
-  
-  int result = runApplication();
-  
-  if (testMemoryLeak()) return ERR_MEMLEAK;
-  
-  return result;
 }
