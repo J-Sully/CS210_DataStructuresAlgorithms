@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		42B40ECF24145A7C00552C5E /* CS210_Assignment5A_Stack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 42B40ECE24145A7C00552C5E /* CS210_Assignment5A_Stack.cpp */; };
+		42B40ECF24145A7C00552C5E /* Assignment5A.h in Sources */ = {isa = PBXBuildFile; fileRef = 42B40ECE24145A7C00552C5E /* Assignment5A.h */; };
+		F603195A2415E93100EB41A4 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F60319592415E93100EB41A4 /* main.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,10 +25,12 @@
 
 /* Begin PBXFileReference section */
 		42B40ECB24145A7C00552C5E /* CS210_Assignment5_StackQueue */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CS210_Assignment5_StackQueue; sourceTree = BUILT_PRODUCTS_DIR; };
-		42B40ECE24145A7C00552C5E /* CS210_Assignment5A_Stack.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CS210_Assignment5A_Stack.cpp; sourceTree = "<group>"; };
+		42B40ECE24145A7C00552C5E /* Assignment5A.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Assignment5A.h; sourceTree = "<group>"; };
 		42B40ED524145AA100552C5E /* Node.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
 		42B40ED624145AC700552C5E /* Stack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Stack.h; sourceTree = "<group>"; };
 		F60319582415DCC000EB41A4 /* Deque.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Deque.h; sourceTree = "<group>"; };
+		F60319592415E93100EB41A4 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		F603195B2415EA6600EB41A4 /* Assignment5B.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Assignment5B.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,10 +63,12 @@
 		42B40ECD24145A7C00552C5E /* CS210_Assignment5A_Stack */ = {
 			isa = PBXGroup;
 			children = (
-				42B40ECE24145A7C00552C5E /* CS210_Assignment5A_Stack.cpp */,
+				42B40ECE24145A7C00552C5E /* Assignment5A.h */,
+				F603195B2415EA6600EB41A4 /* Assignment5B.h */,
 				42B40ED524145AA100552C5E /* Node.h */,
 				42B40ED624145AC700552C5E /* Stack.h */,
 				F60319582415DCC000EB41A4 /* Deque.h */,
+				F60319592415E93100EB41A4 /* main.cpp */,
 			);
 			path = CS210_Assignment5A_Stack;
 			sourceTree = "<group>";
@@ -124,7 +129,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				42B40ECF24145A7C00552C5E /* CS210_Assignment5A_Stack.cpp in Sources */,
+				F603195A2415E93100EB41A4 /* main.cpp in Sources */,
+				42B40ECF24145A7C00552C5E /* Assignment5A.h in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
