@@ -7,19 +7,36 @@
 //
 
 #include <iostream>
+#include <fstream>
+#include <string>
+using namespace std;
 
 #include "Node.h"
 #include "Stack.h"
 
-template<>
-const int Stack<int>::EMPTY_STACK_INTELEMENT = -1;
+//#define RUN_INPUT_TEST 1
+
+typedef int NTYPE; // Type to use for Stack Nodes.
+
+#ifdef RUN_INPUT_TEST
+  static const string TEST_INPUT = "test_input.txt";
+
+  #if defined(WIN32) || defined(_WIN32)
+    #define PATH_SEPARATOR "\\"
+  #else
+    #define PATH_SEPARATOR "/"
+  #endif
+#endif /* RUN_INPUT_TEST */
+
+enum StatusCode {
+  STATUS_OK = 0,
+  ERR_MEMORY_LEAK
+};
 
 bool testMemoryLeak();
 template <typename T>
-void push(T element, Stack<T> &stack);
-template <typename T>
 void display(const Stack<T>& stack);
-void runProgram();
+int runProgram();
 
 int main(int argc, const char * argv[]) {
   // programmer's identification
@@ -27,20 +44,35 @@ int main(int argc, const char * argv[]) {
   cout << "Programmer's ID: 1282151" << endl;
   cout << "File: " << __FILE__ << endl;
   
-  runProgram();
-  testMemoryLeak();
+#ifdef RUN_INPUT_TEST
+  // Override cin with a test input file.
+  string testInputFile(__FILE__);
+  size_t filePos = testInputFile.rfind(PATH_SEPARATOR);
+  testInputFile = testInputFile.erase(filePos + 1, string::npos);
+  testInputFile += TEST_INPUT;
   
-  return 0;
+  ifstream in(testInputFile.c_str());
+  cin.rdbuf(in.rdbuf()); //redirect std::cin to in.txt!
+#endif /* RUN_INPUT_TEST */
+  
+  int status = runProgram();
+  if (testMemoryLeak()) {
+    return ERR_MEMORY_LEAK;
+  }
+  
+  return status;
 }
 
 // runs program
-void runProgram() {
-  int choice, data;
-  Stack<int> stack;
+int runProgram() {
+  int choice;
+  NTYPE data;
+  Stack<NTYPE> stack;
   
   while(1)
   {
     /* Menu */
+#ifndef RUN_INPUT_TEST // Don't display menu in test mode
     cout <<"------------------------------------\n";
     cout <<" STACK IMPLEMENTATION PROGRAM \n";
     cout <<"------------------------------------\n";
@@ -51,6 +83,7 @@ void runProgram() {
     cout <<"5. Exit\n";
     cout <<"------------------------------------\n";
     cout <<"Enter your choice: ";
+#endif /* RUN_INPUT_TEST */
     
     cin >>choice;
     
@@ -65,11 +98,13 @@ void runProgram() {
         break;
         
       case 2:
-        data = stack.pop();
-        
-        /// If stack is not empty
-        if (data != Stack<int>::EMPTY_STACK_INTELEMENT)
+        if (stack.isEmpty()) {
+          cerr << "Error, stack is empty." << endl;
+        }
+        else {
+          data = stack.pop();
           cout <<"Data => " << data << endl;
+        }
         break;
         
       case 3:
@@ -92,23 +127,16 @@ void runProgram() {
     
     cout <<"\n\n";
   }
+  return STATUS_OK;
 }
 
 // returns true if memory leak
 bool testMemoryLeak() {
-  if (Node<int>::sNumObjects != 0) {
-    cerr << "Num leaked nodes: " << Node<int>::sNumObjects << endl;
+  if (sNumNodeObjects != 0) {
+    cerr << "Num leaked nodes: " << sNumNodeObjects << endl;
     return true;
   }
   return false;
-}
-
-
-//Function to push a new element in stack.
-template <typename T>
-void push(T element, Stack<T> &stack) {
-  stack.push(element);
-  cout <<"Data pushed to stack.\n";
 }
 
 // Function to display elements in stack

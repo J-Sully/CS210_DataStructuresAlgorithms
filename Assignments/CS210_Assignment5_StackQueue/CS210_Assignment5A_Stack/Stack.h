@@ -21,10 +21,7 @@ public:
   bool isEmpty() const { return mHead == nullptr; }
   void display(ostream& output) const;
   int getSize() const { return mSize; }
-  
-  //This is used in getEntry to allow personalized error strings
-  static const int EMPTY_STACK_INTELEMENT;
-  
+
 private:
   Node<T>* mHead = nullptr;
   int mSize = 0;
@@ -33,8 +30,8 @@ private:
 template <typename T>
 Stack<T>::~Stack() {
   while (mHead != nullptr) {
-    mHead = mHead->nextNode;
-    delete mHead->prevNode;
+    mHead = mHead->getNext();
+    delete mHead->getPrev();
   }
 }
 
@@ -45,9 +42,7 @@ void Stack<T>::push(T element) {
     mHead = newNode;
   }
   else {
-    newNode->nextNode = mHead;
-    newNode->prevNode = nullptr;
-    mHead->prevNode = newNode;
+    newNode->link(mHead);
     mHead = newNode;
   }
   mSize++;
@@ -58,18 +53,18 @@ template <typename T>
 T Stack<T>::pop() {
   if (isEmpty()) {
     cerr << "Error, stack is empty." << endl;
-    return EMPTY_STACK_INTELEMENT;
+    T element = T();
+    return element;
   }
   else {
-    T element = mHead->mObject;
+    T element = mHead->getObject();
     if (mSize == 1) {
       delete mHead;
       mHead = nullptr;
     }
     else {
-      mHead = mHead->nextNode;
-      delete mHead->prevNode;
-      mHead->prevNode = nullptr;
+      mHead = mHead->getNext();
+      delete mHead->getPrev();
     }
     mSize--;
     return element;
@@ -78,8 +73,8 @@ T Stack<T>::pop() {
 
 template<typename T>
 void Stack<T>::display(ostream &output) const {
-  for(Node<T>* cursor = mHead; cursor != nullptr; cursor = cursor->nextNode) {
-    cursor->writeToStream(output);
+  for(const Node<T>* cursor = mHead; cursor != nullptr; cursor = cursor->getNext()) {
+    output << cursor << endl;
   }
 }
 
