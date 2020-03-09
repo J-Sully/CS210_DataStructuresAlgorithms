@@ -6,6 +6,8 @@
 #ifndef Deque_h
 #define Deque_h
 
+#include "Node.h"
+
 template <typename T>
 class Deque {
 public:
@@ -17,8 +19,10 @@ public:
   
   void push_front(const T& element);
   void pop_front();
+  T pop_front_val();
   void push_back(const T& element);
   void pop_back();
+  T pop_back_val();
   
   T& front() { return mHead->getObject(); }
   const T& front() const { return mHead->getObject(); }
@@ -104,6 +108,31 @@ void Deque<T>::pop_back() {
   }
   mSize--;
 }
+
+// Function to pop element from top of stack and return that element.
+template <typename T>
+T Deque<T>::pop_front_val() {
+  if (isEmpty()) {
+    throw out_of_range("Deque<T>::pop_front_val() : empty deque");
+  }
+  
+  T element = front();
+  pop_front();
+  return element;
+}
+
+// Function to pop element from bottom of stack and return that element.
+template <typename T>
+T Deque<T>::pop_back_val() {
+  if (isEmpty()) {
+    throw out_of_range("Deque<T>::pop_back_val() : empty deque");
+  }
+  
+  T element = back();
+  pop_back();
+  return element;
+}
+
 
 template<typename T>
 void Deque<T>::display(ostream &output) const {

@@ -31,6 +31,7 @@
 		F60319582415DCC000EB41A4 /* Deque.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Deque.h; sourceTree = "<group>"; };
 		F60319592415E93100EB41A4 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		F603195B2415EA6600EB41A4 /* Assignment5B.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Assignment5B.h; sourceTree = "<group>"; };
+		F603195C2415ED3000EB41A4 /* Queue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Queue.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +70,7 @@
 				42B40ED624145AC700552C5E /* Stack.h */,
 				F60319582415DCC000EB41A4 /* Deque.h */,
 				F60319592415E93100EB41A4 /* main.cpp */,
+				F603195C2415ED3000EB41A4 /* Queue.h */,
 			);
 			path = CS210_Assignment5A_Stack;
 			sourceTree = "<group>";

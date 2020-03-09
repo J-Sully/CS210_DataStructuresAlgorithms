@@ -18,11 +18,11 @@ enum StatusCode {
   ERR_MEMORY_LEAK
 };
 
-#include "Assignment5A.h"
-//#include "Assignment5B.h"
+//#include "Assignment5A.h"
+#include "Assignment5B.h"
 
 #ifdef RUN_INPUT_TEST
-  static const string TEST_INPUT = "test_input_5a.txt";
+  static const string TEST_INPUT = "test_input_5b.txt";
 
   #if defined(WIN32) || defined(_WIN32)
     #define PATH_SEPARATOR "\\"
@@ -51,7 +51,7 @@ int main(int argc, const char * argv[]) {
   cin.rdbuf(in.rdbuf()); //redirect std::cin to in.txt!
 #endif /* RUN_INPUT_TEST */
   
-  int status = runAssignment5A();
+  int status = runAssignment5B();
   
   if (testMemoryLeak()) {
     return ERR_MEMORY_LEAK;

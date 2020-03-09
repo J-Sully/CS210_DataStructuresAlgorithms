@@ -12,13 +12,12 @@
 #include <iostream>
 using namespace std;
 
-#include "Node.h"
 #include "Stack.h"
 
 typedef int NTYPE; // Type to use for Stack Nodes.
 
 template <typename T>
-void display(const Stack<T>& stack);
+void displayStack(const Stack<T>& stack);
 
 // runs assignment 5A
 int runAssignment5A() {
@@ -69,7 +68,7 @@ int runAssignment5A() {
         break;
       
       case 4:
-        display(stack);
+        displayStack(stack);
         break;
         
         
@@ -89,7 +88,7 @@ int runAssignment5A() {
 
 // Function to display elements in stack
 template <typename T>
-void display(const Stack<T>& stack) {
+void displayStack(const Stack<T>& stack) {
   if (!stack.isEmpty()) {
     stack.display(cout);
     cout << endl;

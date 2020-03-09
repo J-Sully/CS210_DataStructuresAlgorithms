@@ -15,8 +15,8 @@ template <typename T>
 class Stack {
 public:
   Stack() {}
-  void push(T element);
-  T pop();
+  void push(const T& element) { mDeque.push_front(element); }
+  T pop() { return mDeque.pop_front_val(); }
   bool isEmpty() const { return mDeque.isEmpty(); }
   void display(ostream& output) const { mDeque.display(output); }
   int getSize() const { return mDeque.getSize(); }
@@ -24,23 +24,5 @@ public:
 private:
   Deque<T> mDeque;
 };
-
-template <typename T>
-void Stack<T>::push(T element) {
-  mDeque.push_front(element);
-}
-
-//Function to pop element from top of stack.
-template <typename T>
-T Stack<T>::pop() {
-  if (mDeque.isEmpty()) {
-    throw out_of_range("Stack<T>::pop() : empty stack");
-  }
-  
-  T element = mDeque.front();
-  mDeque.pop_front();
-  return element;
-}
-
 
 #endif /* Stack_h */
