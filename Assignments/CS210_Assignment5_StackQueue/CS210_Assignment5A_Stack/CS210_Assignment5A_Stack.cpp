@@ -7,16 +7,13 @@
 //
 
 #include <iostream>
+using namespace std;
 
 #include "Node.h"
 #include "Stack.h"
 
-template<>
-const int Stack<int>::EMPTY_STACK_INTELEMENT = -1;
 
 bool testMemoryLeak();
-template <typename T>
-void push(T element, Stack<T> &stack);
 template <typename T>
 void display(const Stack<T>& stack);
 void runProgram();
@@ -65,11 +62,13 @@ void runProgram() {
         break;
         
       case 2:
-        data = stack.pop();
-        
-        /// If stack is not empty
-        if (data != Stack<int>::EMPTY_STACK_INTELEMENT)
+        if (stack.isEmpty()) {
+          cerr << "Error, stack is empty." << endl;
+        }
+        else {
+          data = stack.pop();
           cout <<"Data => " << data << endl;
+        }
         break;
         
       case 3:
@@ -96,19 +95,11 @@ void runProgram() {
 
 // returns true if memory leak
 bool testMemoryLeak() {
-  if (Node<int>::sNumObjects != 0) {
-    cerr << "Num leaked nodes: " << Node<int>::sNumObjects << endl;
+  if (sNumNodeObjects != 0) {
+    cerr << "Num leaked nodes: " << sNumNodeObjects << endl;
     return true;
   }
   return false;
-}
-
-
-//Function to push a new element in stack.
-template <typename T>
-void push(T element, Stack<T> &stack) {
-  stack.push(element);
-  cout <<"Data pushed to stack.\n";
 }
 
 // Function to display elements in stack
