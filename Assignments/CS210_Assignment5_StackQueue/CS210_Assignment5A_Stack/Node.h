@@ -13,53 +13,45 @@
 #ifndef NODE_H
 #define NODE_H
 
-#include <string>
-#include <cfloat>
 using namespace std;
+
+// static to keep track of instances to check memory leak. Keeps track of all variants.
+static int sNumNodeObjects = 0;
 
 template <typename T>
 struct Node {
 public:
-  Node() { sNumObjects++; }; // update memory leak tracking number
-  Node(T object) : mObject(object) { sNumObjects++; } // update memory leak tracking number
+  Node() { sNumNodeObjects++; }; // update memory leak tracking number
+  Node(T object) : mObject(object) { sNumNodeObjects++; } // update memory leak tracking number
   ~Node();
   
-  void writeToStream(ostream &output);
+  template <typename U>
+  friend ostream& operator<<(ostream& ostr, const Node<U>* node);
 
-  static int sNumObjects;
-  
   T mObject;
   Node* nextNode = nullptr;
   Node* prevNode = nullptr;
 };
-
-// static - keeps track of number of instances to check for memory leak
-template <typename T>
-int Node<T>::sNumObjects = 0;
 
 template <typename T>
 Node<T>::~Node() {
   // unlink node
   if (nextNode != nullptr) {
     nextNode->prevNode = prevNode;
-    prevNode = nullptr;
   }
   if (prevNode != nullptr) {
     prevNode->nextNode = nextNode;
-    nextNode = nullptr;
   }
+  prevNode = nullptr;
+  nextNode = nullptr;
   // update memory leak tracking number
-  sNumObjects--;
+  sNumNodeObjects--;
 }
 
-template<>
-void Node<int>::writeToStream(ostream &output) {
-  output << mObject << endl;
-}
-
-template<typename T>
-void Node<T>::writeToStream(ostream &output) {
-  mObject->writeToStream(output);
+template<typename U>
+ostream& operator<<(ostream& ostr, const Node<U>* node) {
+  ostr << node->mObject;
+  return ostr;
 }
 
 #endif /* NODE_H */

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		42B40EE524158E4100552C5E /* CS210_Assignment5B_Queues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 42B40EE424158E4100552C5E /* CS210_Assignment5B_Queues.cpp */; };
+		42B40EE524158E4100552C5E /* CS210_Assignment5B_Queue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 42B40EE424158E4100552C5E /* CS210_Assignment5B_Queue.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,7 +24,7 @@
 
 /* Begin PBXFileReference section */
 		42B40EE124158E4100552C5E /* CS210_Assignment5B_Queues */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CS210_Assignment5B_Queues; sourceTree = BUILT_PRODUCTS_DIR; };
-		42B40EE424158E4100552C5E /* CS210_Assignment5B_Queues.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CS210_Assignment5B_Queues.cpp; sourceTree = "<group>"; };
+		42B40EE424158E4100552C5E /* CS210_Assignment5B_Queue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CS210_Assignment5B_Queue.cpp; sourceTree = "<group>"; };
 		42B40EEB24158E5B00552C5E /* Node.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
 		42B40EEC24158E7100552C5E /* Queue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Queue.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -59,7 +59,7 @@
 		42B40EE324158E4100552C5E /* CS210_Assignment5B_Queues */ = {
 			isa = PBXGroup;
 			children = (
-				42B40EE424158E4100552C5E /* CS210_Assignment5B_Queues.cpp */,
+				42B40EE424158E4100552C5E /* CS210_Assignment5B_Queue.cpp */,
 				42B40EEB24158E5B00552C5E /* Node.h */,
 				42B40EEC24158E7100552C5E /* Queue.h */,
 			);
@@ -122,7 +122,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				42B40EE524158E4100552C5E /* CS210_Assignment5B_Queues.cpp in Sources */,
+				42B40EE524158E4100552C5E /* CS210_Assignment5B_Queue.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

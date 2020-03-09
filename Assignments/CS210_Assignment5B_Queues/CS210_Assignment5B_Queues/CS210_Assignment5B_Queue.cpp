@@ -15,12 +15,7 @@
 #include "Node.h"
 #include "Queue.h"
 
-template<>
-const int Queue<int>::EMPTY_QUEUE_INTELEMENT = -1;
-
 bool testMemoryLeak();
-template <typename T>
-void push(T element, Queue<T> &queue);
 template <typename T>
 void display(const Queue<T>& queue);
 void runProgram();
@@ -40,19 +35,11 @@ int main(int argc, const char * argv[]) {
 
 // returns true if memory leak
 bool testMemoryLeak() {
-  if (Node<int>::sNumObjects != 0) {
-    cerr << "Num leaked nodes: " << Node<int>::sNumObjects << endl;
+  if (sNumNodeObjects != 0) {
+    cerr << "Num leaked nodes: " << sNumNodeObjects << endl;
     return true;
   }
   return false;
-}
-
-
-//Function to push a new element in queue.
-template <typename T>
-void push(T element, Queue<T> &queue) {
-  queue.push(element);
-  cout <<"Data pushed to queue.\n";
 }
 
 // Function to display elements in queue
@@ -62,72 +49,69 @@ void display(const Queue<T>& queue) {
     queue.display(cout);
     cout << endl;
   }
-  
-  else
+  else {
     cout << "queue is empty" << endl << endl;
+  }
 }
 
 void runProgram() {
   int option, data;
   Queue<int> queue;
   string menu = prepMenu();
+  
   cout << menu << endl;
   cin >> option;
-  while (option !=7)
-  {
-    
-    switch (option)
-    {
+  
+  while (option !=7) {
+    switch (option) {
       case 1:
         cout << "\nEnter data to enqueue (-99 to stop): ";
         cin >> data;
-        while ( data != -99)
-        {
+        
+        while ( data != -99) {
           queue.enqueue(data);
           cout << "\nEnter data to enqueue (-99 to stop): ";
           cin >> data;
         }
-        
-        
         break;
         
       case 2:
-        data = queue.dequeue();
-        if (data == Queue<int>::EMPTY_QUEUE_INTELEMENT)
+        if (queue.isEmpty()) {
           cout << "Queue is empty."<< endl;
-        else
+        }
+        else {
+          data = queue.dequeue();
           cout << "Data => " << data << endl;
-        
+        }
         break;
         
       case 3:
-    
-        if (queue.isEmpty())
+        if (queue.isEmpty()) {
           cout << "Queue is empty."<< endl;
-        else
+        }
+        else {
           cout << "Queue size => "<< queue.getSize() << endl;
-        
+        }
         break;
         
       case 4:
-        data = queue.getRear();
-        
-        if (data == Queue<int>::EMPTY_QUEUE_INTELEMENT)
-          cout << "Queue is empty." << endl;
-        else
+        if (queue.isEmpty()) {
+          cout << "Queue is empty."<< endl;
+        }
+        else {
+          data = queue.getRear();
           cout << "Rear => " << data << endl;
-        
+        }
         break;
         
       case 5:
-        
-        data = queue.getFront();
-        
-        if (data == Queue<int>::EMPTY_QUEUE_INTELEMENT)
-          cout <<"Queue is empty."<< endl;
-        else
+        if (queue.isEmpty()) {
+          cout << "Queue is empty."<< endl;
+        }
+        else {
+          data = queue.getFront();
           cout <<"Front => " << data << endl;
-        
+        }
         break;
         
       case 6:
