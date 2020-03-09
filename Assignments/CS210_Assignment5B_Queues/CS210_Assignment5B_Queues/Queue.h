@@ -25,11 +25,8 @@ public:
   bool isEmpty() const { return mHead == nullptr; }
   void display(ostream& output) const;
   int getSize() const { return mSize; }
-  const T& getRear() const { return mTail != nullptr ? mTail->mObject : EMPTY_QUEUE_INTELEMENT; }
-  const T& getFront() const { return mHead != nullptr ? mHead->mObject : EMPTY_QUEUE_INTELEMENT; }
-  
-  //This is used in getEntry to allow personalized error strings
-  static const int EMPTY_QUEUE_INTELEMENT;
+  const T& getRear() const { return mTail->mObject; }
+  const T& getFront() const { return mHead->mObject; }
   
 private:
   Node<T>* mHead = nullptr;
@@ -65,7 +62,8 @@ void Queue<T>::enqueue(T element) {
 template <typename T>
 T Queue<T>::dequeue() {
   if (isEmpty()) {
-    return EMPTY_QUEUE_INTELEMENT;
+    T element = T();
+    return element;
   }
   else {
     T element = mHead->mObject;
@@ -77,7 +75,6 @@ T Queue<T>::dequeue() {
     else {
       mHead = mHead->nextNode;
       delete mHead->prevNode;
-      mHead->prevNode = nullptr;
     }
     mSize--;
     return element;
@@ -87,7 +84,7 @@ T Queue<T>::dequeue() {
 template<typename T>
 void Queue<T>::display(ostream &output) const {
   for(Node<T>* cursor = mHead; cursor != nullptr; cursor = cursor->nextNode) {
-    cursor->writeToStream(output);
+    output << cursor << endl;
   }
 }
 
