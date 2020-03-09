@@ -38,7 +38,8 @@ public:
   Node* getPrev() { return mPrevNode; }
   const Node* getPrev() const { return mPrevNode; }
   
-  void link(Node<T>* next);
+  void linkNext(Node<T>* next);
+  void linkPrev(Node<T>* prev);
   void unlink();
   
 private:
@@ -56,13 +57,23 @@ Node<T>::~Node() {
 }
 
 template <typename T>
-void Node<T>::link(Node<T>* next) {
+void Node<T>::linkNext(Node<T>* next) {
   mPrevNode = next->mPrevNode;
   mNextNode = next;
   if (mPrevNode != nullptr) {
     mPrevNode->mNextNode = this;
   }
   mNextNode->mPrevNode = this;
+}
+
+template <typename T>
+void Node<T>::linkPrev(Node<T>* prev) {
+  mNextNode = prev->mNextNode;
+  mPrevNode = prev;
+  if (mNextNode != nullptr) {
+    mNextNode->mPrevNode = this;
+  }
+  mPrevNode->mNextNode = this;
 }
 
 template <typename T>

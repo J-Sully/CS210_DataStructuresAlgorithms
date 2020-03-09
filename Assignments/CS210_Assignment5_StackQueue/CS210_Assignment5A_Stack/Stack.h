@@ -9,73 +9,37 @@
 #ifndef Stack_h
 #define Stack_h
 
-#include "Node.h"
+#include "Deque.h"
 
 template <typename T>
 class Stack {
 public:
-  Stack(){}
-  ~Stack();
+  Stack() {}
   void push(T element);
   T pop();
-  bool isEmpty() const { return mHead == nullptr; }
-  void display(ostream& output) const;
-  int getSize() const { return mSize; }
+  bool isEmpty() const { return mDeque.isEmpty(); }
+  void display(ostream& output) const { mDeque.display(output); }
+  int getSize() const { return mDeque.getSize(); }
 
 private:
-  Node<T>* mHead = nullptr;
-  int mSize = 0;
+  Deque<T> mDeque;
 };
 
 template <typename T>
-Stack<T>::~Stack() {
-  while (mHead != nullptr) {
-    mHead = mHead->getNext();
-    delete mHead->getPrev();
-  }
-}
-
-template <typename T>
 void Stack<T>::push(T element) {
-  Node<T>* newNode = new Node<T>(element);
-  if (mHead == nullptr) {
-    mHead = newNode;
-  }
-  else {
-    newNode->link(mHead);
-    mHead = newNode;
-  }
-  mSize++;
+  mDeque.push_front(element);
 }
 
 //Function to pop element from top of stack.
 template <typename T>
 T Stack<T>::pop() {
-  if (isEmpty()) {
-    cerr << "Error, stack is empty." << endl;
-    T element = T();
-    return element;
+  if (mDeque.isEmpty()) {
+    throw out_of_range("Stack<T>::pop() : empty stack");
   }
-  else {
-    T element = mHead->getObject();
-    if (mSize == 1) {
-      delete mHead;
-      mHead = nullptr;
-    }
-    else {
-      mHead = mHead->getNext();
-      delete mHead->getPrev();
-    }
-    mSize--;
-    return element;
-  }
-}
-
-template<typename T>
-void Stack<T>::display(ostream &output) const {
-  for(const Node<T>* cursor = mHead; cursor != nullptr; cursor = cursor->getNext()) {
-    output << cursor << endl;
-  }
+  
+  T element = mDeque.front();
+  mDeque.pop_front();
+  return element;
 }
 
 
