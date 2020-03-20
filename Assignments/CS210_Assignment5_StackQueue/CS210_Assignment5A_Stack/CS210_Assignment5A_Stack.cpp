@@ -18,7 +18,7 @@
 bool testMemoryLeak();
 template <typename T>
 void display(const Stack<T>& stack);
-void runProgram();
+void runProgram();å
 
 int main(int argc, const char * argv[]) {
   // programmer's identification
