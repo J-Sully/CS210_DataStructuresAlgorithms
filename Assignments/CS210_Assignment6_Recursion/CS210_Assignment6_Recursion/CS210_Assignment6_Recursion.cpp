@@ -40,7 +40,7 @@ void runProgram() {
   cin >> numDisks;
   HanoiTower tower(numDisks);
   tower.printStacks();
-  tower.moveStack(tower.mFirst, tower.mSecond, tower.mThird, numDisks);
+  tower.moveDisk(numDisks, tower.mFirst, tower.mSecond, tower.mThird);
 }
 
 // returns true if memory leak

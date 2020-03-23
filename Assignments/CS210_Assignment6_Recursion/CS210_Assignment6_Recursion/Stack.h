@@ -56,6 +56,9 @@ void Stack<T>::push(T element) {
     mHead = newNode;
   }
   else {
+    if (mHead->mObject < element) {
+      throw logic_error("Invalid disk size"); 
+    }
     newNode->nextNode = mHead;
     newNode->prevNode = nullptr;
     mHead->prevNode = newNode;

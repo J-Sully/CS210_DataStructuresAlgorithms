@@ -19,7 +19,7 @@ struct HanoiTower {
   Stack<unsigned int> mSecond;
   Stack<unsigned int> mThird;
   void printStacks();
-  void moveStack(Stack<unsigned int> &source, Stack<unsigned int> &destination, Stack<unsigned int> &temp, unsigned int numDisks);
+  void moveDisk(unsigned int diskNum, Stack<unsigned int> &source, Stack<unsigned int> &destination, Stack<unsigned int> &temp);
 };
 
 HanoiTower::HanoiTower(int numDisks) : mFirst("A"), mSecond("B"), mThird("C") {
@@ -36,18 +36,14 @@ void HanoiTower::printStacks() {
 #endif // VERBOSE
 }
 
-void HanoiTower::moveStack(Stack<unsigned int> &source, Stack<unsigned int> &destination, Stack<unsigned int> &temp, unsigned int numDisks) {
-  if (numDisks == 0) {
+void HanoiTower::moveDisk(unsigned int diskNum, Stack<unsigned int> &source, Stack<unsigned int> &destination, Stack<unsigned int> &temp) {
+  if (diskNum == 0) {
     return;
   }
-  else {
-    for (int k = 1; k <= numDisks; k++) {
-      moveStack(destination, temp, source, k - 1);
-      destination.push(source.pop());
-      cout << "Move Disk " << k << " from post " << source.getName() << " to post " << destination.getName() << endl;
-      printStacks();
-      moveStack(temp, destination, source, k - 1);
-    }
-  }
+  moveDisk(diskNum - 1, source, temp, destination);
+  destination.push(source.pop());
+  cout << "Move Disk " << diskNum << " from post " << source.getName() << " to post " << destination.getName() << endl;
+  printStacks();
+  moveDisk(diskNum - 1, temp, destination, source);
 }
 #endif /* HannoiTower_h */
