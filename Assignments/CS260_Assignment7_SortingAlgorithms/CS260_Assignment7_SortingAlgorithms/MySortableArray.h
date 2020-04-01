@@ -104,6 +104,7 @@ void MySortableArray<T>::increaseArraySize(int newSize) {
       mMySortableArray[i] = sourceArray[i];
     }
   }
+  delete sourceArray;
 }
 
 template <typename T>
