@@ -14,7 +14,38 @@
 #define MYSORTABLEARRAY_H
 
 #include <string>
+#include <iostream>
 using namespace std;
+
+// static to keep track of instances to check memory leak. Keeps track of all variants.
+static int sNumNodeObjects = 0;
+
+template <typename T>
+struct Element {
+  Element(){ sNumNodeObjects++; }
+  Element(int index, T value) : mIndex(index), mValue(value) { sNumNodeObjects++; }
+  ~Element() { sNumNodeObjects--; }
+  
+  Element& operator=(const Element& element);
+  template<typename U>
+  friend ostream& operator<<(ostream& ostr, const Element<U>* element);
+  
+  T mValue;
+  int mIndex = 0;
+};
+
+template <typename T>
+Element<T>& Element<T>::operator=(const Element<T> &element) {
+  mValue = element.mValue;
+  mIndex = element.mIndex;
+  return *this;
+}
+
+template<typename U>
+ostream& operator<<(ostream& ostr, const Element<U>* element) {
+  ostr << element->mIndex << "=>" << element->value;
+  return ostr;
+}
 
 template <typename T>
 class MySortableArray {
@@ -23,30 +54,32 @@ public:
   MySortableArray();
   MySortableArray(int size);
   MySortableArray(const MySortableArray& srcArray);
-  ~MySortableArray() {delete [] mMySortableArray;}
+  ~MySortableArray() { delete [] mMySortableArray; }
   
   MySortableArray& operator=(const MySortableArray& srcArray);
   
+  //inititalizes the array
+  void init() { mMySortableArray = new Element<T>[0]; }
   int getSize() const { return mSize; }
-  //returns a desired BAD_INPUT string in cases of error - array doesn't exist (null) or is empty or index is out of range
-  const T& getEntry(int index) const { return index >= 0 && index < mSize
-    ? mMySortableArray[index] : NULL; };
-  void addEntry(const T &entry);
+  //returns desired entry or throws exception
+  const T& getEntry(int index) const;
+  // insertion sort to add entry by index value, returns false if index is filled
+  bool addEntry(int index, T value);
   //deleteEntry will delete ALL matching entries. The bool is an error catching mechanism False means that the array doesn't exist (null) or its empty or that there wasn't a match
-  bool deleteEntry(const T &entry);
-  void sort(int numElements);
-  void setEntry(int index, const T &value);
+  bool deleteIndex(int index);
+  bool sort(int numElements);
   bool isEmpty() const { return mSize == 0; }
+  void display(ostream &str) const;
   
 private:
   int mSize = 0;
-  T *mMySortableArray = nullptr;
+  Element<T> *mMySortableArray = nullptr;
   
-  //helper function to find the number of matches to resize MySortableArray for deleteEntry
-  int getNumMatchingEntries(const T &entry) const;
   //helper function to copy all entries in dynamically allocated array returns false if there input array has a size < 0 or size != 0 when MySortableArray = nullptr
   bool copyData(const MySortableArray &srcArray);
-  void increaseArraySize(int newSize);
+  //helper function to find the loc of the right index, returns -1 if not found.
+  int getLoc(int index);
+  void increaseArraySize(int newSize, int gapIndex);
   void quickSort(int firstIndex, int last);
   void swap(int firstIndex, int secondIndex);
   int partition(int low, int high);
@@ -55,7 +88,7 @@ private:
 template <typename T>
 MySortableArray<T>::MySortableArray() {
   mSize = 0;
-  mMySortableArray = nullptr;
+  init();
 }
 
 template <typename T>
@@ -82,7 +115,7 @@ bool MySortableArray<T>::copyData(const MySortableArray &srcArray) {
   mSize = srcArray.mSize;
   if (mSize > 0 && srcArray.mMySortableArray != nullptr) {
     delete [] mMySortableArray; // this is safe, I checked.
-    mMySortableArray = new T[mSize];
+    mMySortableArray = new Element<T>[mSize];
     for (int i = 0; i < mSize; i++) {
       mMySortableArray[i] = srcArray.mMySortableArray[i];
     }
@@ -96,91 +129,95 @@ bool MySortableArray<T>::copyData(const MySortableArray &srcArray) {
 }
 
 template <typename T>
-void MySortableArray<T>::increaseArraySize(int newSize) {
-  T* sourceArray = mMySortableArray;
-  mMySortableArray = new T[newSize]{0};
+void MySortableArray<T>::increaseArraySize(int newSize, int gapIndex) {
+  Element<T>* sourceArray = mMySortableArray;
+  mMySortableArray = new Element<T>[newSize];
   if (!isEmpty()) {
     for(int i = 0; i < mSize; i++) {
+      if (i == gapIndex) {
+        i++;
+      }
       mMySortableArray[i] = sourceArray[i];
     }
   }
-  delete sourceArray;
+  mSize = newSize;
+  delete [] sourceArray;
 }
 
 template <typename T>
-void MySortableArray<T>::addEntry(const T &entry) {
-  T *tempArray = mMySortableArray;
-  mSize++;
-  mMySortableArray = new T[mSize];
-  // make sure array exists
-  if (tempArray != nullptr) {
-    for (int i = 0; i < mSize - 1; i++) {
-      mMySortableArray[i] = tempArray[i];
+const T& MySortableArray<T>::getEntry(int index) const {
+  for (int i = 0; i < mSize; i++) {
+    if (mMySortableArray[i].mIndex == index) {
+      return *mMySortableArray[i].mValue;
     }
-    delete [] tempArray;
   }
-  mMySortableArray[mSize - 1] = entry;
+  throw logic_error("invalid index");
+};
+
+template <typename T>
+int MySortableArray<T>::getLoc(int index) {
+  int loc = -1;
+  for (int i = 0; i < mSize; i++) {
+    if (mMySortableArray[i].mIndex == index) {
+      loc = i;
+    }
+  }
+  return loc;
 }
 
 template <typename T>
-int MySortableArray<T>::getNumMatchingEntries(const T &entry) const {
-  int numEntries = 0;
-  if (mSize > 0) {
-    for (int i = 0; i < mSize; i++) {
-      if (mMySortableArray[i] == entry) {
-        numEntries++;
+bool MySortableArray<T>::addEntry(int index, T value) {
+  int locAdd = getLoc(index);
+  if (locAdd == -1) {
+    if (mSize > 0) {
+      while (index < mMySortableArray[locAdd].mIndex) {
+        locAdd++;
       }
+      increaseArraySize(++mSize, locAdd);
+      mMySortableArray[locAdd].mIndex = index;
+      mMySortableArray[locAdd].mValue = value;
     }
+    else {
+      
+    }
+    return true;
   }
-  return numEntries;
+  return false;
 }
 
 template <typename T>
-bool MySortableArray<T>::deleteEntry(const T &entry) {
-  T *tempArray = mMySortableArray;
-  int numEntries = getNumMatchingEntries(entry);
-  int newSize = mSize - numEntries;
-  
-  if (newSize == 0 && mSize > 0) {
-    mSize = 0;
-    delete [] mMySortableArray;
-    mMySortableArray = nullptr;
-  }
-  
-  else if (newSize != mSize) {
-    mMySortableArray = new T[newSize];
-    for (int i = 0, j = 0; j < newSize && i < mSize; i++) {
-      if (tempArray[i] != entry) {
+bool MySortableArray<T>::deleteIndex(int index) {
+  Element<T>* tempArray = nullptr;
+  int loc = getLoc(index);
+  if (loc != -1) {
+    if (mSize - 1 > 0) {
+      tempArray = mMySortableArray;
+      mMySortableArray = new Element<T>(mSize - 1);
+      for(int i = 0, j = 0; i < mSize; i++, j++) {
+        if (tempArray[i].mIndex == index) {
+          i++;
+        }
         mMySortableArray[j] = tempArray[i];
-        j++;
       }
     }
+    else {
+      mMySortableArray = nullptr;
+    }
     delete [] tempArray;
-    mSize = newSize;
+    mSize--;
+    return true;
   }
-  
-  else {
-    return false;
-  }
-  return true;
+  return false;
 }
 
-template <typename T>
-void MySortableArray<T>::setEntry(int index, const T &value) {
-  if (index >= mSize) {
-    increaseArraySize(index + 1);
-  }
-  mMySortableArray[index] = value;
-}
 
 template <typename T>
-void MySortableArray<T>::sort(int numElements) {
-  if (numElements > mSize) {
-    increaseArraySize(numElements);
-  }
-  if (mSize > 0) {
+bool MySortableArray<T>::sort(int numElements) {
+  if (numElements >= 0 && numElements < mSize) {
     quickSort(0, numElements - 1);
+    return true;
   }
+  return false;
 }
 
 template <typename T>
@@ -195,28 +232,36 @@ void MySortableArray<T>::quickSort(int first, int last) {
 
 template <typename T>
 int MySortableArray<T>::partition(int low, int high) {
-  int pivotIndex = low;
-  T pivot = mMySortableArray[high];
+  //int pivotIndex = low;
+  T pivot = *mMySortableArray[high].mValue;
   do {
-    while (low < high && mMySortableArray[low] < pivot) {
+    while (low < high && *mMySortableArray[low].mValue < pivot) {
       low++;
     }
-    while (high > low && mMySortableArray[high] > pivot) {
+    while (high > low && *mMySortableArray[high].mValue > pivot) {
       high--;
     }
     if (low < high) {
       swap(low, high);
     }
   } while (low < high);
-  pivotIndex = high;
-  return pivotIndex;
+  //pivotIndex = high;
+  //return pivotIndex;
+  return high;
 }
 
 template <typename T>
 void MySortableArray<T>::swap(int firstIndex, int secondIndex) {
-  T temp = mMySortableArray[firstIndex];
-  mMySortableArray[firstIndex] = mMySortableArray[secondIndex];
-  mMySortableArray[secondIndex] = temp;
+  T* temp = mMySortableArray[firstIndex].mValue;
+  mMySortableArray[firstIndex].mValue = mMySortableArray[secondIndex].mValue;
+  mMySortableArray[secondIndex].mValue = temp;
+}
+
+template <typename T>
+void MySortableArray<T>::display(ostream &ostr) const {
+  for (int i = 0; i < mSize; i++) {
+    ostr << mMySortableArray[i] << endl;
+  }
 }
 
 #endif /* MYSORTABLEARRAY_H */
