@@ -28,9 +28,7 @@ bool testMemoryLeak() {
 template <typename T>
 void printArray(ostream &ostr, const MySortableArray<T> array) {
   if (!array.isEmpty()) {
-    for (int i = 0; i < array.getSize(); i++) {
-      ostr << i << "=>" << array.getEntry(i) << endl;;
-    }
+    array.display(cout);
   }
   else {
     ostr << "Array is empty" << endl;
@@ -38,14 +36,65 @@ void printArray(ostream &ostr, const MySortableArray<T> array) {
   ostr << endl;
 }
 
+bool parseIndexValue(const string &input, int &index, int &value) {
+  stringstream ss;
+  ss.str(input);
+  ss >> index >> value;
+  return !ss.fail() && index >= 0;
+}
+
+bool parseIndex(const string &input, int &num) {
+  stringstream ss;
+  ss.str(input);
+  ss >> num;
+  return !ss.fail();
+}
+
 void runProgram() {
-  MySortableArray<int> array;
-  cout << array.getSize() << endl;
-  cout << array.addEntry(7, 10) << endl;
+  string input = "";
+  int index = 0, value = 0, numEntries = 0;
+  MySortableArray<int> dataToSort;
   
+  cout << "Please enter data as '<index> <value>' enter -1 to end: " << endl;
+  getline(cin, input);
+  while (input != "-1") {
+    if (parseIndexValue(input, index, value)) {
+      dataToSort.addEntry(index, value);
+    }
+    else {
+      cerr << "Error with entry, please try again: " << endl;
+    }
+    getline(cin, input);
+  }
+  cout << "Data entered: " << endl;
+  printArray(cout, dataToSort);
   
+  do {
+    cout << "Number of entries to sort: ";
+    getline(cin, input);
+    parseIndex(input, numEntries);
+    if (numEntries < 0 || cin.fail()) {
+      cerr << "Error, please try again." << endl << endl;
+    }
+  } while (numEntries < 0);
   
+  dataToSort.sort(numEntries);
+  printArray(cout, dataToSort);
   
+  do {
+    cout << endl << "Enter an index to view, enter -1 to exit: ";
+    getline(cin, input);
+    if (parseIndex(input, index)) {
+      if (dataToSort.validateIndex(index)) {
+        cout << endl << dataToSort.getEntry(index) << endl;
+      }
+    }
+    else {
+      if (index != -1) {
+        cerr << "Invalid index, please try again." << endl << endl;
+      }
+    }
+  } while (index != -1);
 }
 
 int main(int argc, const char * argv[]) {
@@ -58,26 +107,9 @@ int main(int argc, const char * argv[]) {
   testMemoryLeak();
   
   
-  /*
-  stringstream ss;
-  string input = "";
-  int index = 0, value = 0;
-  MySortableArray<int> dataToSort;
-  MySortableArray<string> stringInputs;
-  cout << "Please enter data as '<index> <value>' enter -1 to end: " << endl;
-  getline(cin, input);
-  while (input != "-1") {
-    stringInputs.addEntry(input);
-    ss.str(input);
-    ss >> index >> value;
-    ss.clear();
-    dataToSort.setEntry(index, value);
-    getline(cin, input);
-  }
-  dataToSort.sort(dataToSort.getSize());
-  cout << "Data Entered: " << endl;
-  printArray(cout, dataToSort);
-  */
+
+  
+
   
   
   return 0;
