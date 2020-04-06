@@ -100,12 +100,16 @@ private:
   int getLoc(int index);
   
   // helper function to increase size of the array and leaves a hole for adding an entry.
+  // TODO: Do we even need to specify newSize?  If we are always adding a 'gap' at a particular index, we are always
+  // only increasing size by 1.  This could be built into the function, and no newSize parameter is needed.
   void increaseArraySize(int newSize, int gapIndex);
   
   // These three helper functions help implements the sort function using QuickSort.
   void quickSort(int firstIndex, int last);
   void swap(int firstIndex, int secondIndex);
   int partition(int low, int high);
+  
+  friend void runTests();
 };
 
 //default constructor initializes size to zero and dynamicArray to nullptr
