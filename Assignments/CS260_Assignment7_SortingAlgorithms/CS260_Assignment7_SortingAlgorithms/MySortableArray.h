@@ -59,7 +59,6 @@ class MySortableArray {
 public:
   //default constructor initializes size to zero and dynamicArray to nullptr
   MySortableArray();
-  MySortableArray(int size);
   MySortableArray(const MySortableArray& srcArray);
   ~MySortableArray() { delete [] mMySortableArray; }
   
@@ -90,9 +89,6 @@ private:
   int mSize = 0;
   Element<T> *mMySortableArray = nullptr;
   
-  // inititalizes the array
-  void init() { mMySortableArray = new Element<T>[0]; }
-  
   // helper function to copy all entries in dynamically allocated array returns false if there input array has a size < 0 or size != 0 when MySortableArray = nullptr
   bool copyData(const MySortableArray &srcArray);
   
@@ -100,9 +96,7 @@ private:
   int getLoc(int index);
   
   // helper function to increase size of the array and leaves a hole for adding an entry.
-  // TODO: Do we even need to specify newSize?  If we are always adding a 'gap' at a particular index, we are always
-  // only increasing size by 1.  This could be built into the function, and no newSize parameter is needed.
-  void increaseArraySize(int newSize, int gapIndex);
+  void increaseArraySize(int gapIndex);
   
   // These three helper functions help implements the sort function using QuickSort.
   void quickSort(int firstIndex, int last);
@@ -112,26 +106,17 @@ private:
   friend void runTests();
 };
 
-//default constructor initializes size to zero and dynamicArray to nullptr
 template <typename T>
 MySortableArray<T>::MySortableArray() {
   mSize = 0;
-  init();
+  mMySortableArray = new Element<T>[mSize];
 }
 
 template <typename T>
 MySortableArray<T>::MySortableArray(const MySortableArray &srcArray) {
   copyData(srcArray);
 }
-
-template <typename T>
-MySortableArray<T>::MySortableArray(int size) {
-  if (size > 0) {
-    mSize = size;
-    mMySortableArray = new Element<T>[size];
-  }
-}
-
+ 
 template <typename T>
 MySortableArray<T>& MySortableArray<T>::operator=(const MySortableArray &srcArray) {
   copyData(srcArray);
@@ -141,34 +126,25 @@ MySortableArray<T>& MySortableArray<T>::operator=(const MySortableArray &srcArra
 template <typename T>
 bool MySortableArray<T>::copyData(const MySortableArray &srcArray) {
   mSize = srcArray.mSize;
-  if (mSize > 0 && srcArray.mMySortableArray != nullptr) {
-    delete [] mMySortableArray; // this is safe, I checked.
-    mMySortableArray = new Element<T>[mSize];
-    for (int i = 0; i < mSize; i++) {
-      mMySortableArray[i] = srcArray.mMySortableArray[i];
-    }
-    return true;
+  delete [] mMySortableArray; // this is safe, I checked.
+  mMySortableArray = new Element<T>[mSize];
+  for (int i = 0; i < mSize; i++) {
+    mMySortableArray[i] = srcArray.mMySortableArray[i];
   }
-  else {
-    mSize = 0;
-    mMySortableArray = nullptr;
-    return false;
-  }
+  return true;
 }
 
 template <typename T>
-void MySortableArray<T>::increaseArraySize(int newSize, int gapIndex) {
+void MySortableArray<T>::increaseArraySize(int gapIndex) {
   Element<T>* sourceArray = mMySortableArray;
-  mMySortableArray = new Element<T>[newSize];
-  if (!isEmpty()) {
-    for(int i = 0, j = 0; i < mSize; i++, j++) {
-      if (i == gapIndex) {
-        j++;
-      }
-      mMySortableArray[j] = sourceArray[i];
+  mMySortableArray = new Element<T>[mSize + 1];
+  for(int i = 0, j = 0; i < mSize; i++, j++) {
+    if (i == gapIndex) {
+      j++;
     }
+    mMySortableArray[j] = sourceArray[i];
   }
-  mSize = newSize;
+  mSize++;
   delete [] sourceArray;
 }
 
@@ -179,63 +155,59 @@ const T& MySortableArray<T>::getEntry(int index) const {
       return mMySortableArray[i].mValue;
     }
   }
-  throw logic_error("invalid index");
+  throw out_of_range("invalid index");
 };
 
 template <typename T>
 int MySortableArray<T>::getLoc(int index) {
-  int locAdd = -1;
-  int i = 0;
-  if (mSize > 0) {
-    for (; i < mSize && mMySortableArray[i].mIndex < index ; i++);
-    locAdd = i;
-  }
+  int locAdd = 0;
+  for (; locAdd < mSize && mMySortableArray[locAdd].mIndex < index ; locAdd++);
   return locAdd;
 }
 
 template <typename T>
 void MySortableArray<T>::addEntry(int index, T value) {
   int locAdd = 0;
-  if (mSize > 0) {
-    locAdd = getLoc(index);
-    if (mMySortableArray[locAdd].mIndex == index) {
-      mMySortableArray[locAdd].mValue = value;
-      return;
-    }
-    increaseArraySize(mSize + 1, locAdd);
-    mMySortableArray[locAdd].mIndex = index;
+  locAdd = getLoc(index);
+  if (mMySortableArray[locAdd].mIndex == index) {
     mMySortableArray[locAdd].mValue = value;
+    return;
+  }
+  increaseArraySize(locAdd);
+  mMySortableArray[locAdd].mIndex = index;
+  mMySortableArray[locAdd].mValue = value;
+  /*
+  if (mSize > 0) {
+    
   }
   else {
     mMySortableArray[0].mIndex = index;
     mMySortableArray[0].mValue = value;
     mSize++;
   }
+   */
 }
 
 template <typename T>
 bool MySortableArray<T>::deleteIndex(int index) {
-  Element<T>* tempArray = nullptr;
+  if (isEmpty()) return false;
+  Element<T>* tempArray;
   int loc = getLoc(index);
-  if (loc != -1) {
-    if (mSize - 1 > 0) {
-      tempArray = mMySortableArray;
-      mMySortableArray = new Element<T>[mSize - 1];
-      for(int i = 0, j = 0; i < mSize; i++, j++) {
-        if (tempArray[i].mIndex == index) {
-          i++;
-        }
-        mMySortableArray[j] = tempArray[i];
-      }
+  if (loc >= mSize) return false;
+  if (mMySortableArray[loc].mIndex != index) return false;
+  
+  tempArray = mMySortableArray;
+  mMySortableArray = new Element<T>[mSize - 1];
+  for(int i = 0, j = 0; i < mSize; i++, j++) {
+    if (tempArray[i].mIndex == index) {
+      i++;
     }
-    else {
-      mMySortableArray = nullptr;
-    }
-    delete [] tempArray;
-    mSize--;
-    return true;
+    mMySortableArray[j] = tempArray[i];
   }
-  return false;
+
+  delete [] tempArray;
+  mSize--;
+  return true;
 }
 
 
