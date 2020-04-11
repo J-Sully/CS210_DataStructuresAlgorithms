@@ -169,7 +169,7 @@ template <typename T>
 void MySortableArray<T>::addEntry(int index, T value) {
   int locAdd = 0;
   locAdd = getLoc(index);
-  if (mMySortableArray[locAdd].mIndex == index) {
+  if (locAdd < mSize && mMySortableArray[locAdd].mIndex == index) {
     mMySortableArray[locAdd].mValue = value;
     return;
   }
@@ -235,8 +235,8 @@ void MySortableArray<T>::quickSort(int first, int last) {
 
 template <typename T>
 int MySortableArray<T>::partition(int low, int high) {
-  //int pivotIndex = low;
-  T pivot = mMySortableArray[high].mValue;
+  int pivotIndex = low;
+  T pivot = mMySortableArray[low].mValue;
   do {
     while (low < high && mMySortableArray[low].mValue < pivot) {
       low++;
@@ -244,13 +244,15 @@ int MySortableArray<T>::partition(int low, int high) {
     while (high > low && mMySortableArray[high].mValue > pivot) {
       high--;
     }
-    if (low < high) {
+    if (mMySortableArray[low].mValue > mMySortableArray[high].mValue) {
       swap(low, high);
     }
+    if (mMySortableArray[low].mValue == mMySortableArray[high].mValue) {
+      break;
+    }
   } while (low < high);
-  //pivotIndex = high;
-  //return pivotIndex;
-  return high;
+  pivotIndex = high;
+  return pivotIndex;
 }
 
 template <typename T>

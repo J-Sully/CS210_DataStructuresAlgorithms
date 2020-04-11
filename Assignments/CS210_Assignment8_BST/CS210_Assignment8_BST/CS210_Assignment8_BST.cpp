@@ -19,33 +19,25 @@ using namespace std;
 //#define RUN_TESTS
 //#define RUN_INPUT_TEST
 
-#include "MySortableArray.h"
+#include "BST.h"
 
+const int SIZE =15;
 
 #ifdef RUN_INPUT_TEST
-  static const string TEST_INPUT = "input.txt";
+static const string TEST_INPUT = "input.txt";
 
-  #if defined(WIN32) || defined(_WIN32)
-    #define PATH_SEPARATOR "\\"
-  #else
-    #define PATH_SEPARATOR "/"
-  #endif
+
+
+#if defined(WIN32) || defined(_WIN32)
+#define PATH_SEPARATOR "\\"
+#else
+#define PATH_SEPARATOR "/"
+#endif
 #endif /* RUN_INPUT_TEST */
 
 
 // returns true if memory leak
 bool testMemoryLeak();
-
-// prints array in "<index>=><value>" format separated by spaces.
-template <typename T>
-void printArray(ostream &ostr, const MySortableArray<T> array);
-
-// helper function to parse index and value from input - with index validation. Returns parse fails or if index < 0.
-template <typename T>
-bool parseIndexValue(const string &input, int &index, T &value);
-
-// helper function to parse an int from input
-bool parseIndex(const string &input, int &num);
 
 // runs tests for the project.
 void runTests();
@@ -83,7 +75,7 @@ int main(int argc, const char * argv[]) {
 
 // run tests for the project
 void runTests() {
-  
+  /*
   {
     MySortableArray<int> array;
     array.addEntry(1, 2);
@@ -94,7 +86,7 @@ void runTests() {
     assert(array.getSize() == 1);
     assert(array.getEntry(1) == 5);
   }
-
+  
   {
     MySortableArray<int> array;
     array.addEntry(1, 2);
@@ -119,7 +111,7 @@ void runTests() {
     array.addEntry(3, 4);
     array.display(cout);
   } // FIXME: This sometimes crashes on destructor.
-
+  
   {
     MySortableArray<int> array;
     assert(array.getLoc(0) == 0);
@@ -174,7 +166,7 @@ void runTests() {
     MySortableArray<int> array;
     array.addEntry(0, 2);
     array.addEntry(1, 2);
-    array.sort(2); 
+    array.sort(2);
     array.display(cout);
   }
   
@@ -217,6 +209,7 @@ void runTests() {
     array.sort(5);
     array.display(cout);
   }
+   */
 }
 
 // returns true if memory leak
@@ -228,76 +221,13 @@ bool testMemoryLeak() {
   return false;
 }
 
-// prints array in "<index>=><value>" format separated by spaces.
-template <typename T>
-void printArray(ostream &ostr, const MySortableArray<T> array) {
-  if (!array.isEmpty()) {
-    array.display(cout);
-  }
-  else {
-    ostr << "Array is empty" << endl;
-  }
-  ostr << endl;
-}
-
-// helper function to parse index and value from input - with index validation. Returns parse fails or if index < 0.
-template <typename T>
-bool parseIndexValue(const string &input, int &index, T &value) {
-  stringstream ss;
-  ss.str(input);
-  ss >> index >> value;
-  return !ss.fail() && index >= 0;
-}
-
-// helper function to parse an int from input
-bool parseIndex(const string &input, int &num) {
-  stringstream ss;
-  ss.str(input);
-  ss >> num;
-  return !ss.fail() && num >= 0;
-}
-
 // runs the UI for the project.
 void runProgram() {
-  string input = "";
-  int index = 0, value = 0, numEntries = 0;
-  MySortableArray<int> dataToSort;
-  
-  cout << "Please enter data as '<index> <value>' enter -1 to end: " << endl;
-  getline(cin, input);
-  while (input != "-1") {
-    if (parseIndexValue(input, index, value)) {
-      dataToSort.addEntry(index, value);
-    }
-    else {
-      cerr << "Error with entry, please try again: " << endl;
-    }
-    getline(cin, input);
-  }
-  cout << endl << "Data entered: " << endl;
-  printArray(cout, dataToSort);
-  
-  do {
-    cout << "Number of entries to sort: ";
-    getline(cin, input);
-    if (!parseIndex(input, numEntries)) {
-      cerr << "Error, please try again." << endl << endl;
-    }
-  } while (numEntries < 0);
-  
-  dataToSort.sort(numEntries);
-  printArray(cout, dataToSort);
-  
-  do {
-    cout << endl << "Enter an index to view, enter -1 to exit: ";
-    getline(cin, input);
-    if (parseIndex(input, index) && dataToSort.validateIndex(index)) {
-      cout << endl << dataToSort.getEntry(index) << endl;
-    }
-    else {
-      if (index != -1) {
-        cerr << "Invalid index, please try again." << endl;
-      }
-    }
-  } while (index != -1);
+  BST bst;
+  int values[SIZE] = {5, 2, 12, -4, 3, 9, 21};
+ // int values[SIZE] = {5, 2, 12, -4, 3, 9, 21, -7, 19, 25, -8, -6, -4, 3, 12};
+  //int values[SIZE] = {5, 2, 12, -4, 3, 9, 21, -7, 19, 25, -8, -6, -4, 3, 12};
+  //int values[SIZE] = {5, 2, 12, -4, 3, 9, 21, -7, 19, 25, -8, -6, -4, 3, 12};
+  for (int i = 0; i < 7; i++)
+    bst.insert(values[i]);
 }
