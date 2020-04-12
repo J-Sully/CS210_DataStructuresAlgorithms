@@ -119,6 +119,16 @@ void runTests() {
   assert(tree.getRoot()->mLeft == nullptr);
   assert(tree.getRoot()->mRight == nullptr);
   tree.clearTree(tree.getRoot());
+  
+  tree.insert(5);
+  tree.insert(12);
+  tree.insert(2);
+  tree.remove(5);
+  assert(tree.getRoot()->mValue == 12);
+  assert(tree.getRoot()->mRight == nullptr);
+  assert(tree.getRoot()->mLeft != nullptr);
+  
+  
 
   
   
