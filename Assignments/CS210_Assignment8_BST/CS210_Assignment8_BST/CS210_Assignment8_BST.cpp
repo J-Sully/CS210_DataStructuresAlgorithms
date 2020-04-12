@@ -128,146 +128,16 @@ void runTests() {
   assert(tree.getRoot()->mRight == nullptr);
   assert(tree.getRoot()->mLeft != nullptr);
   
-  
-
-  
-  
-  /*
-   
-  {
-    MySortableArray<int> array;
-    array.addEntry(1, 2);
-    array.display(cout);
-    assert(array.getSize() == 1);// sometimes fails
-    assert(array.getEntry(1) == 2);
-    array.addEntry(1, 5);
-    assert(array.getSize() == 1);
-    assert(array.getEntry(1) == 5);
-  }
-  
-  {
-    MySortableArray<int> array;
-    array.addEntry(1, 2);
-    array.deleteIndex(1);
-    array.addEntry(2, 3);
-    array.display(cout);
-  }
-  
-  {
-    MySortableArray<int> array;
-    array.addEntry(1, 2);
-    array.deleteIndex(5);
-    array.addEntry(2, 3);
-    array.display(cout);
-  }
-  
-  {
-    MySortableArray<int> array;
-    array.addEntry(1, 2);
-    array.addEntry(2, 3);
-    array.deleteIndex(5);
-    array.addEntry(3, 4);
-    array.display(cout);
-  } // FIXME: This sometimes crashes on destructor.
-  
-  {
-    MySortableArray<int> array;
-    assert(array.getLoc(0) == 0);
-    array.addEntry(0, 5);
-    assert(array.getLoc(0) == 0);
-    array.addEntry(1, 5);
-    array.addEntry(2, 4);
-    array.addEntry(4, 6);
-    array.display(cout);
-    assert(array.getLoc(0) == 0);
-    assert(array.getLoc(4) == 3); //sometimes crashes
-    assert(array.getLoc(100) == 4);
-    assert(array.getEntry(2) == 4);
-    assert(array.getEntry(0) == 5);
-    bool caught = false;
-    try {
-      array.getEntry(100);
-    } catch (out_of_range) {  // FIXME: getEntry should raise an out_of_range exception
-      caught = true;
-    }
-    assert(caught == true);
-  }
-  
-  {
-    MySortableArray<int> source;
-    
-    MySortableArray<int> dest1(source);
-    assert(dest1.isEmpty());
-    dest1.addEntry(1, 2);     // FIXME: This crashes.
-    assert(dest1.getEntry(1) == 2);
-    
-    MySortableArray<int> dest2;
-    dest2.copyData(source);
-    assert(dest2.isEmpty());
-    
-    source.addEntry(1, 2);
-    source.addEntry(2, 3);
-    
-    MySortableArray<int> dest3(source);
-    assert(dest3.getSize() == 2); // FIXME: This sometimes fails
-    assert(dest3.getEntry(1) == 2);
-    assert(dest3.getEntry(2) == 3); // FIXME: This somtimes fails
-    
-    MySortableArray<int> dest4;
-    dest4.copyData(source);
-    assert(dest4.getSize() == 2);  // FIXME: This sometimes fails
-    assert(dest4.getEntry(1) == 2);
-    assert(dest4.getEntry(2) == 3);  // FIXME: This sometimes fails
-  }
-  
-  {
-    MySortableArray<int> array;
-    array.addEntry(0, 2);
-    array.addEntry(1, 2);
-    array.sort(2);
-    array.display(cout);
-  }
-  
-  {
-    MySortableArray<int> array;
-    array.addEntry(0, 2);
-    array.sort(1);
-    array.display(cout);
-  }
-  
-  {
-    MySortableArray<int> array;
-    array.addEntry(4, 0);
-    array.addEntry(2, 1);
-    array.addEntry(0, 4);
-    array.addEntry(1, 2);
-    array.display(cout);
-    array.sort(0);
-    array.display(cout);
-    array.sort(1);
-    array.display(cout);
-    array.sort(2);
-    assert(array.getEntry(0) == 2); //sometimes crashes
-    assert(array.getEntry(1) == 4);
-    assert(array.getEntry(2) == 1);
-    assert(array.getEntry(4) == 0);
-    array.display(cout);
-    array.sort(3);
-    assert(array.getEntry(0) == 1);
-    assert(array.getEntry(1) == 2);// crash
-    assert(array.getEntry(2) == 4);
-    assert(array.getEntry(4) == 0);
-    array.display(cout);
-    array.sort(4);
-    assert(array.getEntry(0) == 0);
-    assert(array.getEntry(1) == 1);
-    assert(array.getEntry(2) == 2);
-    assert(array.getEntry(4) == 4);
-    array.display(cout);
-    array.sort(5);
-    array.display(cout);
-  }
-   */
+  tree.clearTree(tree.getRoot());
+  tree.insert(5);
+  tree.insert(12);
+  tree.insert(2);
+  tree.insert(9);
+  tree.insert(21);
+  tree.insert(19);
+  tree.insert(25);
+  tree.remove(12);
+  assert(tree.getRoot()->mRight->mValue == 19);
 }
 
 // returns true if memory leak
@@ -293,8 +163,11 @@ void runProgram() {
   bst.postOrderTraversal(); /// should be -8 -6 -7 -4 3 2 9 19 25 21 12 5
   //                                    -8 -6 -7 -4 3 2 9 19 25 21 12 5
   bst.remove(3); /// Node 3 has 0 children --> delete the node and make it NULL;
+  bst.inOrderTraversal();
   bst.remove(-4); /// Node -4 has 1 children --> Link parent to child --> delete the node and make it NULL;
+  bst.inOrderTraversal();
   bst.remove(12); /// Node 12 has 2 children --> findMin for the right subtree --> swap value -> delete
+  bst.inOrderTraversal();
 
   bst.preOrderTraversal(); /// should be 5 2 -7 -8 -6 19 9 21 25
                                        //5 2 -7 -8 -6 19 9 21 25

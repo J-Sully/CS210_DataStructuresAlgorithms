@@ -146,7 +146,7 @@ void BST::remove(int value) {
   
   parent = findParent(value);
   
-  if (parent != mRoot) {
+  if (mRoot->mValue != value) {
     if (parent->mLeft != nullptr && parent->mLeft->mValue == value) {
       cur = parent->mLeft;
       leftSide = true;
@@ -171,7 +171,6 @@ void BST::remove(int value) {
     else if (parent->mRight == cur){
       parent->mRight = nullptr;
     }
-    
   }
   else {
     if (cur == mRoot) {
@@ -180,7 +179,6 @@ void BST::remove(int value) {
       }
       else {
         mRoot = cur->mRight;
-        
       }
     }
     else if (leftSide) {
