@@ -12,29 +12,13 @@
 
 #include <assert.h>
 #include <iostream>
-#include <fstream>
-#include <sstream>
 using namespace std;
 
-#define RUN_TESTS
-//#define RUN_INPUT_TEST
+//#define RUN_TESTS
 
 #include "BST.h"
 
 const int SIZE =15;
-
-#ifdef RUN_INPUT_TEST
-static const string TEST_INPUT = "input.txt";
-
-
-
-#if defined(WIN32) || defined(_WIN32)
-#define PATH_SEPARATOR "\\"
-#else
-#define PATH_SEPARATOR "/"
-#endif
-#endif /* RUN_INPUT_TEST */
-
 
 // returns true if memory leak
 bool testMemoryLeak();
@@ -50,17 +34,6 @@ int main(int argc, const char * argv[]) {
   cout << "Programmer: Jessica Sullivan" << endl;
   cout << "Programmer's ID: 1282151" << endl;
   cout << "File: " << __FILE__ << endl;
-  
-#ifdef RUN_INPUT_TEST
-  // Override cin with a test input file.
-  string testInputFile(__FILE__);
-  size_t filePos = testInputFile.rfind(PATH_SEPARATOR);
-  testInputFile = testInputFile.erase(filePos + 1, string::npos);
-  testInputFile += TEST_INPUT;
-  
-  ifstream in(testInputFile.c_str());
-  cin.rdbuf(in.rdbuf()); //redirect std::cin to in.txt!
-#endif /* RUN_INPUT_TEST */
   
 #ifdef RUN_TESTS
   runTests();
@@ -103,7 +76,7 @@ void runTests() {
   assert(tree.getRoot()->mValue == 2);
   assert(tree.getRoot()->mLeft == nullptr);
   assert(tree.getRoot()->mRight == nullptr);
-  tree.clearTree(tree.getRoot());
+  tree.clearTree();
   assert(tree.getRoot() == nullptr);
   
   tree.insert(5);
@@ -118,7 +91,7 @@ void runTests() {
   assert(tree.getRoot()->mValue == 12);
   assert(tree.getRoot()->mLeft == nullptr);
   assert(tree.getRoot()->mRight == nullptr);
-  tree.clearTree(tree.getRoot());
+  tree.clearTree();
   
   tree.insert(5);
   tree.insert(12);
@@ -128,7 +101,7 @@ void runTests() {
   assert(tree.getRoot()->mRight == nullptr);
   assert(tree.getRoot()->mLeft != nullptr);
   
-  tree.clearTree(tree.getRoot());
+  tree.clearTree();
   tree.insert(5);
   tree.insert(12);
   tree.insert(2);
@@ -138,6 +111,51 @@ void runTests() {
   tree.insert(25);
   tree.remove(12);
   assert(tree.getRoot()->mRight->mValue == 19);
+  
+  tree.clearTree();
+  tree.insert(5);
+  tree.insert(2);
+  tree.insert(-4);
+  tree.remove(2);
+  assert(tree.getRoot()->mLeft->mValue == -4);
+  
+  tree.clearTree();
+  tree.insert(5);
+  tree.insert(12);
+  tree.insert(21);
+  tree.remove(12);
+  assert(tree.getRoot()->mRight->mValue == 21);
+  
+  tree.clearTree();
+  tree.insert(5);
+  tree.insert(12);
+  tree.insert(2);
+  tree.insert(9);
+  tree.insert(21);
+  tree.remove(12);
+  assert(tree.getRoot()->mRight->mValue == 21);
+  
+  tree.clearTree();
+  tree.insert(5);
+  tree.insert(2);
+  tree.insert(12);
+  tree.insert(-4);
+  tree.insert(9);
+  tree.insert(21);
+  tree.remove(5);
+  assert(tree.getRoot()->mValue == 9);
+  
+  tree.clearTree();
+  tree.insert(5);
+  tree.insert(2);
+  tree.insert(3);
+  tree.remove(2);
+  assert(tree.getRoot()->mLeft->mValue == 3);
+  
+  tree.clearTree();
+  tree.insert(5);
+  tree.remove(4);
+  assert(tree.getRoot() != nullptr);
 }
 
 // returns true if memory leak
@@ -157,31 +175,16 @@ void runProgram() {
     bst.insert(values[i]);
   
   bst.preOrderTraversal(); /// should be 5 2 -4 -7 -8 -6 3 12 9 21 19 25
-                                      // 5 2 -4 -7 -8 -6 3 12 9 21 19 25
   bst.inOrderTraversal(); /// should be -8 -7 -6 -4 2 3 5 9 12 19 21 25
-                                      //-8 -7 -6 -4 2 3 5 9 12 19 21 25
   bst.postOrderTraversal(); /// should be -8 -6 -7 -4 3 2 9 19 25 21 12 5
-  //                                    -8 -6 -7 -4 3 2 9 19 25 21 12 5
+  
   bst.remove(3); /// Node 3 has 0 children --> delete the node and make it NULL;
-  bst.inOrderTraversal();
   bst.remove(-4); /// Node -4 has 1 children --> Link parent to child --> delete the node and make it NULL;
-  bst.inOrderTraversal();
   bst.remove(12); /// Node 12 has 2 children --> findMin for the right subtree --> swap value -> delete
-  bst.inOrderTraversal();
 
   bst.preOrderTraversal(); /// should be 5 2 -7 -8 -6 19 9 21 25
-                                       //5 2 -7 -8 -6 19 9 21 25
   bst.inOrderTraversal(); /// should be -8 -7 -6 2 5 9 19 21 25
-                                      //-8 -7 -6 2 5 9 19 21 25
   bst.postOrderTraversal(); /// should be -8 -6 7 2 9 25 21 19 5
-                                        //-8 -6 -7 2 9 25 21 19 5
-  bst.remove(bst.getRoot()->mValue);
-  bst.preOrderTraversal(); /// should be 5 2 -7 -8 -6 19 9 21 25
-  //5 2 -7 -8 -6 19 9 21 25
-  bst.inOrderTraversal(); /// should be -8 -7 -6 2 5 9 19 21 25
-  //-8 -7 -6 2 5 9 19 21 25
-  bst.postOrderTraversal(); /// should be -8 -6 7 2 9 25 21 19 5
-  //-8 -6 -7 2 9 25 21 19 5
   
   return;
 }

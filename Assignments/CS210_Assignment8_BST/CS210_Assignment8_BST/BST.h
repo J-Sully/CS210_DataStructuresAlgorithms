@@ -19,10 +19,13 @@ using namespace std;
 // static to keep track of instances to check memory leak. Keeps track of all variants.
 static int sNumNodeObjects = 0;
 
-struct BSTNode /// BinarySearchTreeNode
-{
+// Binary Search Tree Node
+struct BSTNode {
+  // increments sNumNodeObjects for memory leak check
   BSTNode() { sNumNodeObjects++; }
+  // increments sNumNodeObjects for memory leak check
   BSTNode(const int value) : mValue(value) { sNumNodeObjects++; }
+  // decrements sNumNodeObjects for memory leak check
   ~BSTNode();
   
   // copies member variables
@@ -54,38 +57,58 @@ ostream& operator<<(ostream& ostr, const BSTNode* node) {
   return ostr;
 }
 
-class BST // BinarySearchTree
-{
-private:
-  BSTNode* mRoot = nullptr;
-  
-  void inOrderTraversal(BSTNode* node) const;
-  void preOrderTraversal(BSTNode* node) const;
-  void postOrderTraversal(BSTNode* node) const;
+// Binary Search Tree
+class BST {
 public:
-  BST (){}
+  BST() {}
+  // Runs clearTree to free allocated space
   ~BST();
   
-  BSTNode* getRoot() { return mRoot; }
+  // returns mRoot
+  BSTNode* getRoot() const { return mRoot; }
+  // inserts a value into the Tree, does nothing if value is already in Tree
   void insert(int value);
+  // removes a value from the Tree, does nothing if value is not found
   void remove(int value);
-  void clearTree(BSTNode *node);
-  BSTNode* findParent(int value) const;
+  // helper function to clear entire tree
+  void clearTree();
+  // helper function to clear subtree starting at cur
+  void clearSubTree(BSTNode* cur);
+  // returns pointer to node containing minimum value in tree - or nullptr if empty
   BSTNode* findMin() const;
+  // returns pointer to node containing maximum value in tree - or nullptr if empty
   BSTNode* findMax() const;
+  // prints out tree's contents in preOrder - uses private functions for recursive calls
   void preOrderTraversal() const;
+  // prints out tree's contents in inOrder - uses private functions for recursive calls
   void inOrderTraversal() const;
+  // prints out tree's contents in postOrder - uses private functions for recursive calls
   void postOrderTraversal() const;
+  
+private:
+  BSTNode* mRoot = nullptr;
+  // helper function to find the parent node for an insert or remove
+  BSTNode* findParent(int value) const;
+  // helper function to print preOrder recursively
+  void preOrderTraversal(BSTNode* node) const;
+  // helper function to print inOrder recursively
+  void inOrderTraversal(BSTNode* node) const;
+  // helper function to print postOrder recursively
+  void postOrderTraversal(BSTNode* node) const;
 };
 
 BST::~BST() {
-  clearTree(mRoot);
+  clearTree();
 }
 
-void BST::clearTree(BSTNode* cur) {
+void BST::clearTree() {
+  clearSubTree(mRoot);
+}
+
+void BST::clearSubTree(BSTNode* cur) {
   if (cur == nullptr) return;
-  clearTree(cur->mLeft);
-  clearTree(cur->mRight);
+  clearSubTree(cur->mLeft);
+  clearSubTree(cur->mRight);
   if (cur == mRoot) {
     mRoot = nullptr;
   }
@@ -100,6 +123,7 @@ void BST::insert(int value) {
     return;
   }
   branch = findParent(value);
+  assert(branch != nullptr);
   if (branch->mValue > value && branch->mLeft == nullptr) {
     branch->mLeft = new BSTNode(value);
     return;
@@ -134,73 +158,53 @@ BSTNode* BST::findParent(int value) const {
   }
 }
 
-
 void BST::remove(int value) {
-  BSTNode* parent = nullptr;
-  BSTNode* cur = mRoot;
-  BSTNode* deleteNode = nullptr;
-  bool twoChild = false;
-  bool leftSide = false;
+  BSTNode* parent = findParent(value);
+  BSTNode* cur = nullptr;
+  BSTNode** parentPtr;
+
+  if (parent == nullptr) return;
   
-  if (mRoot == nullptr) return;
-  
-  parent = findParent(value);
-  
-  if (mRoot->mValue != value) {
-    if (parent->mLeft != nullptr && parent->mLeft->mValue == value) {
-      cur = parent->mLeft;
-      leftSide = true;
-    }
-    else if (parent->mRight != nullptr && parent->mRight->mValue == value){
-      cur = parent->mRight;
-    }
+  // get address of parent node's pointer to node to delete
+  if (parent->mLeft != nullptr && parent->mLeft->mValue == value) {
+    parentPtr = &parent->mLeft;
   }
-  twoChild = cur->mLeft!= nullptr && cur->mRight != nullptr;
-  if (twoChild) {
-    deleteNode = cur;
-    parent = cur;
-    cur = cur->mRight;
-    while (cur->mLeft != nullptr) {
-      parent = cur;
-      cur = cur->mLeft;
-    }
-    deleteNode->mValue = cur->mValue;
-    if (parent->mLeft == cur) {
-      parent->mLeft = nullptr;
-    }
-    else if (parent->mRight == cur){
-      parent->mRight = nullptr;
-    }
+  else if (parent->mRight != nullptr && parent->mRight->mValue == value) {
+    parentPtr = &parent->mRight;
+  }
+  else if (mRoot->mValue == value) {
+    parentPtr = &mRoot;
   }
   else {
-    if (cur == mRoot) {
-      if (cur->mLeft != nullptr) {
-        mRoot = cur->mLeft;
-      }
-      else {
-        mRoot = cur->mRight;
-      }
+    return;
+  }
+  cur = *parentPtr;
+
+  // two children case
+  if (cur->mLeft!= nullptr && cur->mRight != nullptr) {
+    BSTNode* replaceNode = cur;
+    parentPtr = &cur->mRight;
+    cur = cur->mRight;
+    while (cur->mLeft != nullptr) {
+      parentPtr = &cur->mLeft;
+      cur = cur->mLeft;
     }
-    else if (leftSide) {
-      if (cur->mLeft != nullptr) {
-        parent->mLeft = cur->mLeft;
-      }
-      else {
-        parent->mRight = cur->mRight;
-      }
-    } else {
-      if (cur->mLeft != nullptr) {
-        parent->mRight = cur->mLeft;
-      }
-      else {
-        parent->mRight = cur->mRight;
-      }
+    // swap values
+    replaceNode->mValue = cur->mValue;
+    *parentPtr = nullptr;
+  }
+  // one or zero children case
+  else {
+    if (cur->mLeft != nullptr) {
+      *parentPtr = cur->mLeft;
+    }
+    else {
+      *parentPtr = cur->mRight;
     }
   }
   delete cur;
   return;
 }
-
 
 BSTNode* BST::findMin() const {
   BSTNode* cur = mRoot;
@@ -218,14 +222,13 @@ BSTNode* BST::findMax() const {
   return cur;
 }
 
-void BST::preOrderTraversal() const
-{
+void BST::preOrderTraversal() const {
   cout << "preOrderTraversal: ";
   preOrderTraversal(mRoot);
   cout << endl;
 }
-void BST::preOrderTraversal(BSTNode* node) const
-{
+
+void BST::preOrderTraversal(BSTNode* node) const {
   if (node != NULL) {
     cout << node->mValue << " ";
     preOrderTraversal(node->mLeft);
@@ -233,14 +236,13 @@ void BST::preOrderTraversal(BSTNode* node) const
   }
 }
 
-void BST::inOrderTraversal() const
-{
+void BST::inOrderTraversal() const {
   cout << "inOrderTraversal: ";
   inOrderTraversal(mRoot);
   cout << endl;
 }
-void BST::inOrderTraversal(BSTNode* node) const
-{
+
+void BST::inOrderTraversal(BSTNode* node) const {
   if (node != NULL) {
     inOrderTraversal(node->mLeft);
     cout << node->mValue << " ";
@@ -248,20 +250,18 @@ void BST::inOrderTraversal(BSTNode* node) const
   }
 }
 
-void BST::postOrderTraversal() const
-{
+void BST::postOrderTraversal() const {
   cout << "postOrderTraversal: ";
   postOrderTraversal(mRoot);
   cout << endl;
 }
-void BST::postOrderTraversal(BSTNode* node) const
-{
+
+void BST::postOrderTraversal(BSTNode* node) const {
   if (node != NULL) {
     postOrderTraversal(node->mLeft);
     postOrderTraversal(node->mRight);
     cout << node->mValue << " ";
   }
 }
-
 
 #endif /* BST_H */
