@@ -39,9 +39,6 @@ bool testMemoryLeak();
 // helper function to parse index and value from input - with index validation. Returns parse fails or if index < 0.
 bool parsePriorityName(const string &input, int &priority, string &name);
 
-// helper function to parse an int from input
-bool parseIndex(const string &input, int &num);
-
 // runs tests for the project.
 void runTests();
 
@@ -79,71 +76,50 @@ int main(int argc, const char * argv[]) {
 // run tests for the project
 void runTests() {
   PriorityQueue queue;
+  Node node;
   string name = "George";
   queue.penqueue(1, name);
   queue.penqueue(1, name);
-  queue.printPriorityQueue(cout);
-  queue.clearMaxHeap();
-  cout << endl;
+  cout << queue << endl;
   
+  queue.clearMaxHeap();
   queue.penqueue(1, name);
   queue.penqueue(2, name);
-  queue.printPriorityQueue(cout);
-  queue.pdequeue().print(cout);
-  cout << endl;
-  queue.pdequeue().print(cout);
-  cout << queue.isEmpty() << endl;
-  queue.clearMaxHeap();
-  queue.printPriorityQueue(cout);
-  cout << endl;
+  cout << queue << endl;
+  node = queue.pdequeue();
+  assert(node.mPriority == 2);
+  node = queue.pdequeue();
+  assert(node.mPriority == 1);
+  assert(queue.isEmpty());
   
-  queue.penqueue(1, name);
-  queue.penqueue(2, name);
-  queue.penqueue(3, name);
-  queue.printPriorityQueue(cout);
-  queue.pdequeue().print(cout);
   queue.clearMaxHeap();
-  queue.printPriorityQueue(cout);
-  cout << endl;
-  
   queue.penqueue(1, name);
   queue.penqueue(2, name);
   queue.penqueue(3, name);
-  queue.penqueue(4, name);
-  queue.printPriorityQueue(cout);
-  cout << endl;
-  queue.pdequeue().print(cout);
-  cout << endl << endl;
-  queue.printPriorityQueue(cout);
-  cout << endl;
-  queue.pdequeue().print(cout);
-  cout << endl << endl;
-  queue.printPriorityQueue(cout);
-  cout << endl;
-  queue.clearMaxHeap();
-  queue.printPriorityQueue(cout);
-  cout << endl;
+  cout << queue << endl;
+  node = queue.pdequeue();
+  assert(node.mPriority == 3);
+  node = queue.pdequeue();
+  assert(node.mPriority == 2);
+  node = queue.pdequeue();
+  assert(node.mPriority == 1);
+  assert(queue.isEmpty());
   
+  queue.clearMaxHeap();
   queue.penqueue(1, name);
   queue.penqueue(2, name);
   queue.penqueue(3, name);
   queue.penqueue(4, name);
-  queue.penqueue(5, name);
-  queue.printPriorityQueue(cout);
-  cout << endl;
-  queue.pdequeue().print(cout);
-  cout << endl << endl;
-  queue.printPriorityQueue(cout);
-  cout << endl;
-  queue.pdequeue().print(cout);
-  cout << endl << endl;
-  queue.printPriorityQueue(cout);
-  cout << endl;
-  queue.clearMaxHeap();
-  queue.printPriorityQueue(cout);
-  cout << endl;
-  
-  
+  cout << queue << endl;
+  node = queue.pdequeue();
+  assert(node.mPriority == 4);
+  node = queue.pdequeue();
+  assert(node.mPriority == 3);
+  node = queue.pdequeue();
+  assert(node.mPriority == 2);
+  node = queue.pdequeue();
+  assert(node.mPriority == 1);
+  assert(queue.isEmpty());
 }
 
 // returns true if memory leak
@@ -163,14 +139,6 @@ bool parsePriorityName(const string &input, int &priority, string &name) {
   return !ss.fail() && priority >= 1 && priority <= 10;
 }
 
-// helper function to parse an int from input
-bool parseIndex(const string &input, int &num) {
-  stringstream ss;
-  ss.str(input);
-  ss >> num;
-  return !ss.fail() && num >= 0;
-}
-
 // runs the UI for the project.
 void runProgram() {
   PriorityQueue queue;
@@ -185,7 +153,6 @@ void runProgram() {
     getline(cin, input);
   }
   while (!queue.isEmpty()) {
-    queue.pdequeue().print(cout);
-    cout << endl;
+    cout << queue.pdequeue() << endl;
   }
 }

@@ -32,9 +32,7 @@ struct Node {
   Node& operator=(const Node& node);
   
   // makes streaming easier
-  friend ostream& operator<<(ostream& ostr, const Node* node);
-  
-  void print(ostream &ostr) { ostr << mPriority << ' ' << mName; }
+  friend ostream& operator<<(ostream& ostr, const Node &node);
   
   int mPriority = 0;
   string mName;
@@ -50,12 +48,18 @@ Node& Node::operator=(const Node &node) {
   return *this;
 }
 
-ostream& operator<<(ostream& ostr, const Node* node) {
-  ostr << node->mPriority << ' ' << node->mName;
+ostream& operator<<(ostream& ostr, const Node &node) {
+  ostr << node.mPriority << ' ' << node.mName;
   return ostr;
 }
 
+
+#ifdef RUN_TESTS
+static const int DEFAULT_SIZE = 2;
+#else
 static const int DEFAULT_SIZE = 10;
+#endif /* RUN_TESTS */
+
 // Binary Search Tree
 class PriorityQueue {
 public:
@@ -69,7 +73,8 @@ public:
   void penqueue(int priority, const string &mName);
   Node pdequeue();
   void clearMaxHeap();
-  void printPriorityQueue(ostream &ostr);
+  
+  friend ostream& operator<<(ostream& ostr, const PriorityQueue &queue);
   
 private:
   int mCapacity = DEFAULT_SIZE;
@@ -115,12 +120,11 @@ void PriorityQueue::swapNodes(int index1, int index2) {
 }
 
 void PriorityQueue::reheapify(int startIndex) {
-  for (int i = startIndex, j = (startIndex - 1) / 2; i > 0;) {
+  for (int i = startIndex, j = (startIndex - 1) / 2; i > 0;
+       i = j, j = (j - 1) / 2) {
     if (mMaxHeap[i].mPriority > mMaxHeap[j].mPriority) {
       swapNodes(i, j);
     }
-    i = j;
-    j = (j - 1) / 2;
   }
 }
 
@@ -135,15 +139,14 @@ void PriorityQueue::penqueue(int priority, const string &name) {
 }
 
 void PriorityQueue::siftDown(int startIndex) {
-  for (int i = startIndex, j = 2 * startIndex + 1; j < mSize;) {
+  for (int i = startIndex, j = 2 * startIndex + 1; j < mSize;
+       i = j, j = 2 * i + 1) {
     if (mMaxHeap[j].mPriority < mMaxHeap[j + 1].mPriority ) {
       j++;
     }
     if (mMaxHeap[i].mPriority < mMaxHeap[j].mPriority) {
       swapNodes(i, j);
     }
-    i = j;
-    j = 2 * i + 1;
   }
 }
 
@@ -152,18 +155,17 @@ Node PriorityQueue::pdequeue() {
   returnNode = mMaxHeap[0];
   mMaxHeap[0] = mMaxHeap[mSize - 1];
   mMaxHeap[mSize - 1].mPriority = 0;
-  mMaxHeap[mSize - 1].mName = "";
+  mMaxHeap[mSize - 1].mName.clear();
   mSize--;
   siftDown(0);
   return returnNode;
 }
 
-void PriorityQueue::printPriorityQueue(ostream &ostr) {
-  for (int i = 0; i < mSize; i++) {
-    ostr << mMaxHeap[i].mPriority << ' ' << mMaxHeap[i].mName << endl;
+ostream& operator<<(ostream& ostr, const PriorityQueue &queue) {
+  for (int i = 0; i < queue.mSize; i++) {
+    ostr << queue.mMaxHeap[i] << endl;
   }
-  ostr << endl;
+  return ostr;
 }
-
 
 #endif /* PriorityQueue_h */
