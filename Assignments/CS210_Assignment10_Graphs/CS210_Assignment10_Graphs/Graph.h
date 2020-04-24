@@ -14,6 +14,7 @@
 #define GRAPH_H
 
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 #include "DynamicArray.h"
@@ -100,6 +101,7 @@ ostream& operator<<(ostream& ostr, const Edge *edge) {
 class Graph {
 public:
   Graph() {}
+  Graph(const string &inputFile);
   ~Graph() {}
   
   void addVertex(const string &name) { mVertices.addObject(Vertex(name)); }
@@ -113,6 +115,31 @@ private:
   DynamicArray<Vertex> mVertices;
   DynamicArray<Edge> mEdges;
 };
+
+// should add error handling?
+Graph::Graph(const string &inputFile) {
+  string input, name;
+  int index1 = 0, index2 = 0;
+  double weight = 0;
+  ifstream inFile;
+  inFile.open(inputFile);
+  
+  if (inFile) {
+    do {
+      inFile >> index1 >> name;
+      if (index1 == mVertices.getSize()) {
+        addVertex(name);
+      }
+    } while (index1 != -1 && !inFile.fail());
+
+    do {
+      inFile >> index1 >> index2 >> weight;
+      addEdge(index1, index2, weight);
+    } while (index1 != -1 && !inFile.fail());
+    
+    inFile.close();
+  }
+}
 
 void Graph::addEdge(int index1, int index2, double weight) {
   Edge workingEdge;

@@ -16,22 +16,33 @@
 #include <sstream>
 using namespace std;
 
-#define RUN_TESTS
-//#define RUN_INPUT_TEST
+//#define RUN_TESTS
+//#define RUN_INPUT_TEST1
+//#define RUN_INPUT_TEST2
 
 #include "Graph.h"
 #include "DynamicArray.h"
 
 
-#ifdef RUN_INPUT_TEST
-static const string TEST_INPUT = "input.txt";
+#ifdef RUN_INPUT_TEST1
+static const string TEST_INPUT = "MinPath1.txt";
 
 #if defined(WIN32) || defined(_WIN32)
 #define PATH_SEPARATOR "\\"
 #else
 #define PATH_SEPARATOR "/"
 #endif
-#endif /* RUN_INPUT_TEST */
+#endif /* RUN_INPUT_TEST1 */
+
+#ifdef RUN_INPUT_TEST2
+static const string TEST_INPUT = "MinPath2.txt";
+
+#if defined(WIN32) || defined(_WIN32)
+#define PATH_SEPARATOR "\\"
+#else
+#define PATH_SEPARATOR "/"
+#endif
+#endif /* RUN_INPUT_TEST2 */
 
 
 // returns true if memory leak
@@ -52,7 +63,7 @@ int main(int argc, const char * argv[]) {
   cout << "Programmer's ID: 1282151" << endl;
   cout << "File: " << __FILE__ << endl;
   
-#ifdef RUN_INPUT_TEST
+#ifdef RUN_INPUT_TEST1
   // Override cin with a test input file.
   string testInputFile(__FILE__);
   size_t filePos = testInputFile.rfind(PATH_SEPARATOR);
@@ -61,7 +72,18 @@ int main(int argc, const char * argv[]) {
   
   ifstream in(testInputFile.c_str());
   cin.rdbuf(in.rdbuf()); //redirect std::cin to in.txt!
-#endif /* RUN_INPUT_TEST */
+#endif /* RUN_INPUT_TEST1 */
+  
+#ifdef RUN_INPUT_TEST2
+  // Override cin with a test input file.
+  string testInputFile(__FILE__);
+  size_t filePos = testInputFile.rfind(PATH_SEPARATOR);
+  testInputFile = testInputFile.erase(filePos + 1, string::npos);
+  testInputFile += TEST_INPUT;
+  
+  ifstream in(testInputFile.c_str());
+  cin.rdbuf(in.rdbuf()); //redirect std::cin to in.txt!
+#endif /* RUN_INPUT_TEST2 */
   
 #ifdef RUN_TESTS
   runTests();
@@ -125,22 +147,17 @@ bool parsePriorityName(const string &input, int &priority, string &name) {
   return !ss.fail() && priority >= 1 && priority <= 10;
 }
 
+static const string TEST_INPUT = "MinPath1.txt";
+#if defined(WIN32) || defined(_WIN32)
+#define PATH_SEPARATOR "\\"
+#else
+#define PATH_SEPARATOR "/"
+#endif
+
 // runs the UI for the project.
 void runProgram() {
-  /*
-  PriorityQueue queue;
-  string input, name;
-  int priority = 0;
-  cout << "Please enter data as <priority> <name>, enter '-1' to exit: " << endl;
-  getline(cin, input);
-  while (input != "-1") {
-    if (parsePriorityName(input, priority, name)) {
-      queue.penqueue(priority, name);
-    }
-    getline(cin, input);
-  }
-  while (!queue.isEmpty()) {
-    cout << queue.pdequeue() << endl;
-  }
-   */
+  Graph graph("MinPath1.txt");
+  cout << graph << endl;
+  
+
 }
