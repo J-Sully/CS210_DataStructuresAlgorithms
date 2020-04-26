@@ -121,23 +121,26 @@ Graph::Graph(const string &inputFile) {
   string input, name;
   int index1 = 0, index2 = 0;
   double weight = 0;
-  ifstream inFile;
-  inFile.open(inputFile);
+  ifstream fopenInput(inputFile);
   
-  if (inFile) {
+  if (fopenInput) {
     do {
-      inFile >> index1 >> name;
+      fopenInput >> index1;
+      if (index1 == -1) break;
+      fopenInput >> name;
       if (index1 == mVertices.getSize()) {
         addVertex(name);
       }
-    } while (index1 != -1 && !inFile.fail());
+    } while (!fopenInput.fail());
 
     do {
-      inFile >> index1 >> index2 >> weight;
+      fopenInput >> index1;
+      if (index1 == -1) break;
+      fopenInput >> index2 >> weight;
       addEdge(index1, index2, weight);
-    } while (index1 != -1 && !inFile.fail());
+    } while (!fopenInput.fail());
     
-    inFile.close();
+    fopenInput.close();
   }
 }
 

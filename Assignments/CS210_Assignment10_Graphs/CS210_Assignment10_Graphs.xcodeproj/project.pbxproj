@@ -27,6 +27,8 @@
 		42712BFF2450CBE100B3E8B4 /* CS210_Assignment10_Graphs.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CS210_Assignment10_Graphs.cpp; sourceTree = "<group>"; };
 		42712C062450CC0C00B3E8B4 /* Graph.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Graph.h; sourceTree = "<group>"; };
 		42712C072451FD6500B3E8B4 /* DynamicArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DynamicArray.h; sourceTree = "<group>"; };
+		42712C08245380B900B3E8B4 /* MinPath1.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MinPath1.txt; path = CS210_Assignment10_Graphs/MinPath1.txt; sourceTree = "<group>"; };
+		42712C09245380C300B3E8B4 /* MinPath2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MinPath2.txt; path = CS210_Assignment10_Graphs/MinPath2.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,6 +47,8 @@
 			children = (
 				42712BFE2450CBE100B3E8B4 /* CS210_Assignment10_Graphs */,
 				42712BFD2450CBE100B3E8B4 /* Products */,
+				42712C09245380C300B3E8B4 /* MinPath2.txt */,
+				42712C08245380B900B3E8B4 /* MinPath1.txt */,
 			);
 			sourceTree = "<group>";
 		};

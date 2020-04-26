@@ -17,33 +17,20 @@
 using namespace std;
 
 //#define RUN_TESTS
-//#define RUN_INPUT_TEST1
-//#define RUN_INPUT_TEST2
+//#define RUN_INPUT_TEST
 
 #include "Graph.h"
 #include "DynamicArray.h"
 
-
-#ifdef RUN_INPUT_TEST1
-static const string TEST_INPUT = "MinPath1.txt";
+static const string TEST_INPUT = "input.txt";
+static const string GRAPH_INPUT1 = "MinPath1.txt";
+static const string GRAPH_INPUT2 = "MinPath2.txt";
 
 #if defined(WIN32) || defined(_WIN32)
 #define PATH_SEPARATOR "\\"
 #else
 #define PATH_SEPARATOR "/"
-#endif
 #endif /* RUN_INPUT_TEST1 */
-
-#ifdef RUN_INPUT_TEST2
-static const string TEST_INPUT = "MinPath2.txt";
-
-#if defined(WIN32) || defined(_WIN32)
-#define PATH_SEPARATOR "\\"
-#else
-#define PATH_SEPARATOR "/"
-#endif
-#endif /* RUN_INPUT_TEST2 */
-
 
 // returns true if memory leak
 bool testMemoryLeak();
@@ -52,10 +39,10 @@ bool testMemoryLeak();
 bool parsePriorityName(const string &input, int &priority, string &name);
 
 // runs tests for the project.
-void runTests();
+void runTests(const string &codePath);
 
 // runs the UI for the project.
-void runProgram();
+void runProgram(const string &codePath);
 
 int main(int argc, const char * argv[]) {
   // programmer's identification
@@ -63,32 +50,21 @@ int main(int argc, const char * argv[]) {
   cout << "Programmer's ID: 1282151" << endl;
   cout << "File: " << __FILE__ << endl;
   
-#ifdef RUN_INPUT_TEST1
-  // Override cin with a test input file.
-  string testInputFile(__FILE__);
-  size_t filePos = testInputFile.rfind(PATH_SEPARATOR);
-  testInputFile = testInputFile.erase(filePos + 1, string::npos);
-  testInputFile += TEST_INPUT;
+  string codePath(__FILE__);
+  size_t filePos1 = codePath.rfind(PATH_SEPARATOR);
+  codePath = codePath.erase(filePos1 + 1, string::npos);
   
+#ifdef RUN_INPUT_TEST
+  // Override cin with a test input file.
+  string testInputFile = codePath + TEST_INPUT;
   ifstream in(testInputFile.c_str());
   cin.rdbuf(in.rdbuf()); //redirect std::cin to in.txt!
-#endif /* RUN_INPUT_TEST1 */
-  
-#ifdef RUN_INPUT_TEST2
-  // Override cin with a test input file.
-  string testInputFile(__FILE__);
-  size_t filePos = testInputFile.rfind(PATH_SEPARATOR);
-  testInputFile = testInputFile.erase(filePos + 1, string::npos);
-  testInputFile += TEST_INPUT;
-  
-  ifstream in(testInputFile.c_str());
-  cin.rdbuf(in.rdbuf()); //redirect std::cin to in.txt!
-#endif /* RUN_INPUT_TEST2 */
+#endif /* RUN_INPUT_TEST */
   
 #ifdef RUN_TESTS
   runTests();
 #else
-  runProgram();
+  runProgram(codePath);
 #endif /* RUN_TESTS */
   testMemoryLeak();
   
@@ -97,7 +73,7 @@ int main(int argc, const char * argv[]) {
 
 
 // run tests for the project
-void runTests() {
+void runTests(const string &codePath) {
   DynamicArray<int> array1;
   assert(!array1.validateIndex(0));
   array1.addObject(10);
@@ -118,14 +94,16 @@ void runTests() {
   assert(array1.getSize() == 0);
   assert(!array1.validateIndex(1));
   
-  Graph graph;
-  graph.addVertex("SF");
-  graph.addVertex("LA");
-  assert(graph.getNumVertices() == 2);
-  graph.addEdge(0, 1, 10);
-  assert((*graph.getVertex(0).mEdges[0]).mWeight == 10);
-  assert((*graph.getVertex(1).mEdges[0]).mWeight == 10);
+  Graph graph1;
+  graph1.addVertex("SF");
+  graph1.addVertex("LA");
+  assert(graph1.getNumVertices() == 2);
+  graph1.addEdge(0, 1, 10);
+  assert((*graph1.getVertex(0).mEdges[0]).mWeight == 10);
+  assert((*graph1.getVertex(1).mEdges[0]).mWeight == 10);
   
+  Graph graph2(codePath + GRAPH_INPUT1);
+  cout << graph2 << endl;
   
 }
 
@@ -147,16 +125,9 @@ bool parsePriorityName(const string &input, int &priority, string &name) {
   return !ss.fail() && priority >= 1 && priority <= 10;
 }
 
-static const string TEST_INPUT = "MinPath1.txt";
-#if defined(WIN32) || defined(_WIN32)
-#define PATH_SEPARATOR "\\"
-#else
-#define PATH_SEPARATOR "/"
-#endif
-
 // runs the UI for the project.
-void runProgram() {
-  Graph graph("MinPath1.txt");
+void runProgram(const string &codePath) {
+  Graph graph(codePath + GRAPH_INPUT1);
   cout << graph << endl;
   
 
