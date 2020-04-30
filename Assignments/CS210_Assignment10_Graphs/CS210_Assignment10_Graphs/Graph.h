@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 using namespace std;
 
 #include "DynamicArray.h"
@@ -71,11 +72,13 @@ struct Vertex {
   friend ostream& operator<<(ostream& ostr, const Vertex *vertex);
   
   string mName;
+  int mIndex = 0;
   DynamicArray<Edge*> mEdges;
 };
 
 Vertex& Vertex::operator=(const Vertex &vertex) {
   mName = vertex.mName;
+  mIndex = vertex.mIndex; 
   mEdges = vertex.mEdges;
   return *this;
 }
@@ -122,23 +125,34 @@ Graph::Graph(const string &inputFile) {
   int index1 = 0, index2 = 0;
   double weight = 0;
   ifstream fopenInput(inputFile);
+  stringstream ss;
   
   if (fopenInput) {
     do {
-      fopenInput >> index1;
-      if (index1 == -1) break;
-      fopenInput >> name;
-      if (index1 == mVertices.getSize()) {
+      getline(fopenInput, input);
+      if (input == "-1") break;
+      ss.str(input);
+      ss >> index1 >> name;
+      while (ss >> input) {
+        name += ' ';
+        name += input;
+      }
+      if (index1 == mVertices.getSize()) { // enforcing no holes
         addVertex(name);
       }
-    } while (!fopenInput.fail());
+      ss.clear();
+      name.clear();
+    } while (index1 != -1);
 
     do {
-      fopenInput >> index1;
-      if (index1 == -1) break;
-      fopenInput >> index2 >> weight;
-      addEdge(index1, index2, weight);
-    } while (!fopenInput.fail());
+      getline(fopenInput, input);
+      if (input == "-1") break;
+      ss.str(input);
+      ss >> index1 >> index2 >> weight;
+      if (mVertices.validateIndex(index1) && mVertices.validateIndex(index1) && weight > 0)
+        addEdge(index1, index2, weight);
+      ss.clear();
+    } while (index1 != -1);
     
     fopenInput.close();
   }

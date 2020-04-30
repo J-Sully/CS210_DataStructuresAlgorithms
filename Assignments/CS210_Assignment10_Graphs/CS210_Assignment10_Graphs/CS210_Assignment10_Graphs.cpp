@@ -16,7 +16,7 @@
 #include <sstream>
 using namespace std;
 
-//#define RUN_TESTS
+#define RUN_TESTS
 //#define RUN_INPUT_TEST
 
 #include "Graph.h"
@@ -62,7 +62,7 @@ int main(int argc, const char * argv[]) {
 #endif /* RUN_INPUT_TEST */
   
 #ifdef RUN_TESTS
-  runTests();
+  runTests(codePath);
 #else
   runProgram(codePath);
 #endif /* RUN_TESTS */
@@ -102,8 +102,8 @@ void runTests(const string &codePath) {
   assert((*graph1.getVertex(0).mEdges[0]).mWeight == 10);
   assert((*graph1.getVertex(1).mEdges[0]).mWeight == 10);
   
-  Graph graph2(codePath + GRAPH_INPUT1);
-  cout << graph2 << endl;
+  Graph graph2(codePath + GRAPH_INPUT2);
+  assert(graph2.getVertex(6).mName == "ST LOUIS");
   
 }
 
