@@ -32,7 +32,7 @@ public:
   ~DynamicArray();
   
   T& operator[](int index) const;
-  DynamicArray<T>& operator=(const DynamicArray<T> &array);
+  const DynamicArray<T>& operator=(const DynamicArray<T> &array);
   
   T* getArray() const { return mArray; }
   int getSize() const { return mSize; }
@@ -65,7 +65,7 @@ T& DynamicArray<T>::operator[](int index) const {
 }
 
 template <typename T>
-DynamicArray<T>& DynamicArray<T>::operator=(const DynamicArray<T> &array) {
+const DynamicArray<T>& DynamicArray<T>::operator=(const DynamicArray<T> &array) {
   delete [] mArray;
   mCapacity = array.mCapacity;
   mArray = new T[mCapacity];
@@ -86,13 +86,6 @@ void DynamicArray<T>::clear() {
 
 template <typename T>
 void DynamicArray<T>::copyNodes(T* newArray) const {
-  for(int i = 0; i < mSize; i++) {
-    newArray[i] = mArray[i];
-  }
-}
-
-template<>
-void DynamicArray<Edge*>::copyNodes(Edge** newArray) const {
   for(int i = 0; i < mSize; i++) {
     newArray[i] = mArray[i];
   }

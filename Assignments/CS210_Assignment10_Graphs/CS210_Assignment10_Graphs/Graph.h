@@ -34,10 +34,8 @@ struct Edge {
   ~Edge();
   
   // copies member variables
-  Edge& operator=(const Edge& edge);
-  Edge* operator=(const Edge *edge);
-  //Edge& operator=(const Edge *edge);
-  
+  const Edge& operator=(const Edge& edge);
+
   // makes streaming easier
   friend ostream& operator<<(ostream& ostr, const Edge *edge);
   friend ostream& operator<<(ostream& ostr, const Edge *edge);
@@ -53,26 +51,11 @@ Edge::~Edge() {
   sNumEdgeObjects--; // update sNumEdgeObjects for bookkeeping.
 }
 
-Edge& Edge::operator=(const Edge &edge) {
+const Edge& Edge::operator=(const Edge &edge) {
   mWeight = edge.mWeight;
   mVertex1 = edge.mVertex1;
   mVertex2 = edge.mVertex2;
   return *this;
-}
-/*
-Edge& Edge::operator=(const Edge *edge) {
-  mWeight = edge->mWeight;
-  mVertex1 = edge->mVertex1;
-  mVertex2 = edge->mVertex2;
-  return *this;
-}
- */
-
-Edge* Edge::operator=(const Edge *edge) {
-  mWeight = edge->mWeight;
-  mVertex1 = edge->mVertex1;
-  mVertex2 = edge->mVertex2;
-  return this;
 }
 
 // Vertex
@@ -83,9 +66,9 @@ struct Vertex {
   ~Vertex() { sNumVertexObjects--; }
   
   // copies member variables
-  Vertex& operator=(const Vertex& vertex);
+  const Vertex& operator=(const Vertex& vertex);
   
-  void addEdge(Edge &edge) { mEdges.addObject(&edge); }
+  void addEdge(Edge* edge) { mEdges.addObject(edge); }
   
   // makes streaming easier
   friend ostream& operator<<(ostream& ostr, const Vertex *vertex);
@@ -95,7 +78,7 @@ struct Vertex {
   DynamicArray<Edge*> mEdges;
 };
 
-Vertex& Vertex::operator=(const Vertex &vertex) {
+const Vertex& Vertex::operator=(const Vertex &vertex) {
   mName = vertex.mName;
   mIndex = vertex.mIndex; 
   mEdges = vertex.mEdges;
@@ -184,8 +167,8 @@ void Graph::addEdge(int index1, int index2, double weight) {
     workingEdge.mVertex1 = &mVertices[index1];
     workingEdge.mVertex2 = &mVertices[index2];
     mEdges.addObject(workingEdge);
-    mVertices[index1].addEdge(mEdges[mEdges.getSize() - 1]);
-    mVertices[index2].addEdge(mEdges[mEdges.getSize() - 1]);
+    mVertices[index1].addEdge(&mEdges[mEdges.getSize() - 1]);
+    mVertices[index2].addEdge(&mEdges[mEdges.getSize() - 1]);
     return;
   }
   throw out_of_range("invalid index");
