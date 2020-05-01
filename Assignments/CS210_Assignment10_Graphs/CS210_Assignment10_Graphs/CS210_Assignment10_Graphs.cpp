@@ -99,12 +99,29 @@ void runTests(const string &codePath) {
   graph1.addVertex("LA");
   assert(graph1.getNumVertices() == 2);
   graph1.addEdge(0, 1, 10);
-  assert((*graph1.getVertex(0).mEdges[0]).mWeight == 10);
+  assert(graph1.getVertex(0).mEdges[0]->mWeight == 10);
+  assert(graph1.getVertex(0).mEdges[0]->mVertex1->mName == "SF");
+  assert(graph1.getVertex(0).mEdges[0]->mVertex2->mName == "LA");
   assert((*graph1.getVertex(1).mEdges[0]).mWeight == 10);
+  assert(graph1.getVertex(0).mEdges[0]->mVertex1->mName == "SF");
+  assert(graph1.getVertex(0).mEdges[0]->mVertex2->mName == "LA");
+  cout << graph1;
+  
+  
+  Graph graph3(codePath + GRAPH_INPUT1);
+  assert(graph3.getVertex(0).mEdges.getSize() == 3);
+  assert(graph3.getVertex(1).mEdges.getSize() == 3);
+  assert(graph3.getVertex(2).mEdges.getSize() == 3);
+  assert(graph3.getVertex(3).mEdges.getSize() == 4);
+  assert(graph3.getVertex(4).mEdges.getSize() == 2);
+  assert(graph3.getVertex(5).mEdges.getSize() == 3);
+  cout << graph3;
   
   Graph graph2(codePath + GRAPH_INPUT2);
   assert(graph2.getVertex(6).mName == "ST LOUIS");
+  cout << graph2;
   
+
 }
 
 // returns true if memory leak
@@ -129,6 +146,10 @@ bool parsePriorityName(const string &input, int &priority, string &name) {
 void runProgram(const string &codePath) {
   Graph graph(codePath + GRAPH_INPUT1);
   cout << graph << endl;
+  
+  Graph graph2(codePath + GRAPH_INPUT2);
+  assert(graph2.getVertex(6).mName == "ST LOUIS");
+  cout << graph2;
   
 
 }

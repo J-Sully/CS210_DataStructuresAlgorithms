@@ -22,6 +22,7 @@ static const int DEFAULT_SIZE = 2;
 static const int DEFAULT_SIZE = 10;
 #endif /* RUN_TESTS */
 
+struct Edge;
 // Dynamic Array
 template <typename T>
 class DynamicArray {
@@ -42,7 +43,7 @@ public:
   bool validateIndex(int index) { return index >= 0 && index < mSize; }
   
   template <typename U>
-  friend ostream& operator<<(ostream& ostr, const DynamicArray<U> &array);
+  friend ostream& operator<<(ostream& ostr, const DynamicArray<T> &array);
   
 private:
   int mCapacity = DEFAULT_SIZE;
@@ -90,6 +91,13 @@ void DynamicArray<T>::copyNodes(T* newArray) const {
   }
 }
 
+template<>
+void DynamicArray<Edge*>::copyNodes(Edge** newArray) const {
+  for(int i = 0; i < mSize; i++) {
+    newArray[i] = mArray[i];
+  }
+}
+
 template <typename T>
 void DynamicArray<T>::increaseCapacity() {
   mCapacity += DEFAULT_SIZE;
@@ -108,9 +116,9 @@ void DynamicArray<T>::addObject(const T &object) {
   mSize++;
 }
 
-template <typename U>
-ostream& operator<<(ostream& ostr, const DynamicArray<U> &array) {
-  for (int i = 0; i < array.mSize; i++) {
+template <typename T>
+ostream& operator<<(ostream& ostr, const DynamicArray<T> &array) {
+  for (int i = 0; i < array.getSize(); i++) {
     ostr << array[i] << endl;
   }
   return ostr;

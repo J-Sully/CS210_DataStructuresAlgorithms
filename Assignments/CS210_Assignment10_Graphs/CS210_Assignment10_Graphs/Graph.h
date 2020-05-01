@@ -27,12 +27,16 @@ struct Edge {
   // update sNumEdgeObjects for bookkeeping.
   Edge() { sNumEdgeObjects++; }
   // update sNumEdgeObjects for bookkeeping.
+  Edge(const Edge &edge) : mVertex1(edge.mVertex1), mVertex2(edge.mVertex2), mWeight(edge.mWeight) { sNumEdgeObjects++; }
+  // update sNumEdgeObjects for bookkeeping.
   Edge(const double weight, Vertex* vertex1, Vertex* vertex2) : mWeight(weight), mVertex1(vertex1), mVertex2(vertex2) { sNumEdgeObjects++; }
   // update sNumEdgeObjects for bookkeeping.
   ~Edge();
   
   // copies member variables
   Edge& operator=(const Edge& edge);
+  Edge* operator=(const Edge *edge);
+  //Edge& operator=(const Edge *edge);
   
   // makes streaming easier
   friend ostream& operator<<(ostream& ostr, const Edge *edge);
@@ -55,12 +59,27 @@ Edge& Edge::operator=(const Edge &edge) {
   mVertex2 = edge.mVertex2;
   return *this;
 }
+/*
+Edge& Edge::operator=(const Edge *edge) {
+  mWeight = edge->mWeight;
+  mVertex1 = edge->mVertex1;
+  mVertex2 = edge->mVertex2;
+  return *this;
+}
+ */
+
+Edge* Edge::operator=(const Edge *edge) {
+  mWeight = edge->mWeight;
+  mVertex1 = edge->mVertex1;
+  mVertex2 = edge->mVertex2;
+  return this;
+}
 
 // Vertex
 static int sNumVertexObjects = 0;
 struct Vertex {
   Vertex() { sNumVertexObjects++; }
-  Vertex(const string &name) : mName(name) { sNumVertexObjects++; }
+  Vertex(const string &name, int index) : mName(name), mIndex(index) { sNumVertexObjects++; }
   ~Vertex() { sNumVertexObjects--; }
   
   // copies member variables
@@ -107,7 +126,7 @@ public:
   Graph(const string &inputFile);
   ~Graph() {}
   
-  void addVertex(const string &name) { mVertices.addObject(Vertex(name)); }
+  void addVertex(const string &name) { mVertices.addObject(Vertex(name, mVertices.getSize())); }
   Vertex& getVertex(int index) const { return mVertices[index]; }
   int getNumVertices() const { return mVertices.getSize(); }
   const DynamicArray<Edge*>& getEdges(const Vertex &vertex) const { return vertex.mEdges; }
@@ -149,7 +168,7 @@ Graph::Graph(const string &inputFile) {
       if (input == "-1") break;
       ss.str(input);
       ss >> index1 >> index2 >> weight;
-      if (mVertices.validateIndex(index1) && mVertices.validateIndex(index1) && weight > 0)
+      if (mVertices.validateIndex(index1) && mVertices.validateIndex(index2) && weight > 0)
         addEdge(index1, index2, weight);
       ss.clear();
     } while (index1 != -1);
