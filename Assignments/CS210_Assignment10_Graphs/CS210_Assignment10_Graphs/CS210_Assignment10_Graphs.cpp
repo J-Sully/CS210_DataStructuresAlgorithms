@@ -12,7 +12,6 @@
 
 #include <assert.h>
 #include <iostream>
-#include <fstream>
 #include <sstream>
 using namespace std;
 
@@ -35,14 +34,14 @@ static const string GRAPH_INPUT2 = "MinPath2.txt";
 // returns true if memory leak
 bool testMemoryLeak();
 
-// helper function to parse index and value from input - with index validation. Returns parse fails or if index < 0.
-bool parsePriorityName(const string &input, int &priority, string &name);
-
 // runs tests for the project.
 void runTests(const string &codePath);
 
 // runs the UI for the project.
 void runProgram(const string &codePath);
+
+void printMenu(Graph &graph);
+void manageMenu(Graph &graph);
 
 int main(int argc, const char * argv[]) {
   // programmer's identification
@@ -71,13 +70,10 @@ int main(int argc, const char * argv[]) {
   return 0;
 }
 
-
 // run tests for the project
 void runTests(const string &codePath) {
   
-
-  
-  
+  // testing DynamicArray
   DynamicArray<int> array1;
   assert(!array1.validateIndex(0));
   array1.addObject(10);
@@ -98,6 +94,7 @@ void runTests(const string &codePath) {
   assert(array1.getSize() == 0);
   assert(!array1.validateIndex(1));
   
+  // small tests for Graph
   Graph graph1;
   graph1.addVertex("SF");
   graph1.addVertex("LA");
@@ -116,29 +113,24 @@ void runTests(const string &codePath) {
   cout << graph1 << endl;
   graph1.addVertex("NY");
   
+  // file 1 tests for Graph
   Graph graph2(codePath + GRAPH_INPUT1);
   cout << graph2;
-  assert(graph2.getMinPath(0, 0, cout) == 0);
+  for(int i = 0; i < graph2.getNumVertices(); i++) {
+    for (int j = 0; j < graph2.getNumVertices(); j++) {
+      assert(graph2.getMinPath(i, j, cout) == graph2.getMinPath(j, i, cout));
+    }
+  }
   
-  assert(graph2.getMinPath(0, 1, cout) == 80);
-  assert(graph2.getMinPath(1, 0, cout) == 80);
-  assert(graph2.getMinPath(0, 2, cout) == 200);
-  assert(graph2.getMinPath(2, 0, cout) == 200);
-  assert(graph2.getMinPath(0, 3, cout) == 300);
-  assert(graph2.getMinPath(3, 0, cout) == 300);
-  assert(graph2.getMinPath(0, 4, cout) == 920);
-  assert(graph2.getMinPath(4, 0, cout) == 920);
-  assert(graph2.getMinPath(0, 5, cout) == 780);
-  assert(graph2.getMinPath(5, 0, cout) == 780);
-  
-  
- /*
+  // file 2 tests for Graph
   Graph graph3(codePath + GRAPH_INPUT2);
   assert(graph3.getVertex(6)->mName == "ST LOUIS");
   cout << graph3;
-  */
-  
-
+  for(int i = 0; i < graph3.getNumVertices(); i++) {
+    for (int j = 0; j < graph3.getNumVertices(); j++) {
+      assert(graph3.getMinPath(i, j, cout) == graph3.getMinPath(j, i, cout));
+    }
+  }
 }
 
 // returns true if memory leak
@@ -151,20 +143,42 @@ bool testMemoryLeak() {
   return false;
 }
 
-// helper function to parse index and value from input - with index validation. Returns parse fails or if index < 0.
-bool parsePriorityName(const string &input, int &priority, string &name) {
+void printMenu(Graph &graph) {
+  for (int i = 0; i < graph.getNumVertices(); i++) {
+    cout << i << ": " << graph.getVertex(i)->mName << endl;
+  }
+  cout << "Please select two vertices separated by a space to find the minimum distance between two points (enter -1 to exit): ";
+}
+
+void manageMenu(Graph &graph) {
+  string input;
   stringstream ss;
-  ss.str(input);
-  ss >> priority >> name;
-  return !ss.fail() && priority >= 1 && priority <= 10;
+  int index1 = -1, index2 = -1;
+  printMenu(graph);
+  getline(cin, input);
+  while (input != "-1") { 
+    ss.str(input);
+    ss >> index1 >> index2;
+    if (graph.validateVertexIdx(index1) && graph.validateVertexIdx(index2)
+        && !ss.fail()) {
+      cout << endl;
+      graph.getMinPath(index1, index2, cout);
+    }
+    else {
+      cerr << "Error with entry: '" << input << "'" << endl << endl;
+    }
+    ss.clear();
+    index1 = -1;
+    index2 = -1;
+    printMenu(graph);
+    getline(cin, input);
+  }
 }
 
 // runs the UI for the project.
 void runProgram(const string &codePath) {
-  Graph graph(codePath + GRAPH_INPUT1);
-  cout << graph << endl;
-  
-  
-  
-
+  Graph graph1(codePath + GRAPH_INPUT1);
+  Graph graph2(codePath + GRAPH_INPUT2);
+  manageMenu(graph1);
+  manageMenu(graph2);
 }

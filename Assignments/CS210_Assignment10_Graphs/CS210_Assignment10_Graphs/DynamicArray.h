@@ -28,8 +28,7 @@ template <typename T>
 class DynamicArray {
 public:
   DynamicArray() { mArray = new T[DEFAULT_SIZE]; }
-  // Runs clearTree to free allocated space
-  ~DynamicArray();
+  ~DynamicArray() { delete [] mArray; };
   
   T& operator[](int index) const;
   const DynamicArray<T>& operator=(const DynamicArray<T> &array);
@@ -52,11 +51,6 @@ private:
   void increaseCapacity();
   void copyNodes(T* newArray) const;
 };
-
-template <typename T>
-DynamicArray<T>::~DynamicArray() {
-  delete [] mArray;
-}
 
 template <typename T>
 T& DynamicArray<T>::operator[](int index) const {
@@ -116,14 +110,5 @@ ostream& operator<<(ostream& ostr, const DynamicArray<T> &array) {
   }
   return ostr;
 }
-
-/*
-void PriorityQueue::swapNodes(int index1, int index2) {
-  Node storageNode;
-  storageNode = mMaxHeap[index1];
-  mMaxHeap[index1] = mMaxHeap[index2];
-  mMaxHeap[index2] = storageNode;
-}
- */
 
 #endif /* DynamicArray_h */
