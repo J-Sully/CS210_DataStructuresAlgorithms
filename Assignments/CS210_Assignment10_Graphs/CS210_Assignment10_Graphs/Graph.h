@@ -68,11 +68,10 @@ struct Vertex {
   // copies member variables
   const Vertex& operator=(const Vertex& vertex);
   
-  const string& getName() { return mName; }
+  const string& getName() const { return mName; }
   void addEdgeIdx(int edgeIdx) { mEdgeIdxs.addObject(edgeIdx); }
-  int getEdgeIdx(int index) { return mEdgeIdxs[index]; }
-  int getNumEdges() { return mEdgeIdxs.getSize(); }
-  int getIndex() { return mIndex; }
+  int getEdgeIdx(int index) const { return mEdgeIdxs[index]; }
+  int getNumEdges() const { return mEdgeIdxs.getSize(); }
   const DynamicArray<int>& getEdges() { return mEdgeIdxs; }
   
   // makes streaming easier
@@ -98,14 +97,14 @@ public:
   Graph(const string &inputFile);
   ~Graph() {}
   
-  Vertex& getVertex(int index) const { return mVertices[index]; }
-  Edge& getEdge(int index) const { return mEdges[index]; }
+  const Vertex* getVertex(int index) const { return &mVertices[index]; }
+  const Edge* getEdge(int index) const { return &mEdges[index]; }
   int getNumVertices() const { return mVertices.getSize(); }
   int getNumEdges() const { return mEdges.getSize(); }
   void addEdge(int index1, int index2, double weight);
   void addVertex(const string &name)
     { mVertices.addObject(Vertex(name, mVertices.getSize(), this)); }
-  double getMinPath(int startIndex, int endIndex, ostream &ostr);
+  double getMinPath(int startIndex, int endIndex, ostream &ostr) const;
   friend ostream& operator<<(ostream& ostr, const Graph &graph);
   
 private:
@@ -162,7 +161,9 @@ void Graph::addEdge(int index1, int index2, double weight) {
   throw out_of_range("invalid index");
 }
 
-double Graph::getMinPath(int startIndex, int endIndex, ostream &ostr) {
+double Graph::getMinPath(int startIndex, int endIndex, ostream &ostr) const {
+  const Vertex* curVertex = getVertex(startIndex);
+  const Edge* curEdge = nullptr;
   int numVertices = mVertices.getSize();
   bool settledVertices[numVertices];
   double minPath[numVertices];
@@ -171,25 +172,25 @@ double Graph::getMinPath(int startIndex, int endIndex, ostream &ostr) {
   int curVertexIdx = startIndex;
   double curPath = 0;
   double minPathAvailable = DBL_MAX;
-  Edge curEdge;
   stringstream ss;
   
   for (int i = 0; i < numVertices; i++) {
     if (i != startIndex) {
       settledVertices[i] = false;
       minPath[i] = DBL_MAX;
+      minPathS[i].empty();
     }
   }
   settledVertices[startIndex] = true;
   minPath[startIndex] = 0;
   while(!settledVertices[endIndex]) {
-    Vertex curVertex = getVertex(curVertexIdx);
-    for (int i = 0; i < curVertex.getNumEdges(); i++) {
-      curEdge = getEdge(curVertex.getEdgeIdx(i));
-      otherVertexIdx = (curEdge.mVertexIdx1 == curVertexIdx ?
-                        curEdge.mVertexIdx2 : curEdge.mVertexIdx1);
+    curVertex = getVertex(curVertexIdx);
+    for (int i = 0; i < curVertex->getNumEdges(); i++) {
+      curEdge = getEdge(curVertex->getEdgeIdx(i));
+      otherVertexIdx = (curEdge->mVertexIdx1 == curVertexIdx ?
+                        curEdge->mVertexIdx2 : curEdge->mVertexIdx1);
       if (!settledVertices[otherVertexIdx]) {
-        curPath = (minPath[curVertexIdx] == DBL_MAX ? curEdge.mWeight :  minPath[curVertexIdx] + curEdge.mWeight);
+        curPath = (minPath[curVertexIdx] == DBL_MAX ? curEdge->mWeight :  minPath[curVertexIdx] + curEdge->mWeight);
         if (minPath[otherVertexIdx] >= curPath) {
           minPath[otherVertexIdx] = curPath;
           ss << minPathS[curVertexIdx] << endl;
@@ -200,7 +201,7 @@ double Graph::getMinPath(int startIndex, int endIndex, ostream &ostr) {
       }
     }
     for (int i = 0; i < numVertices; i++) {
-      if (!settledVertices[i] && minPathAvailable > minPath[i]) {
+      if (!settledVertices[i] && (minPathAvailable > minPath[i])) {
         curVertexIdx = i;
       }
     }
@@ -211,14 +212,14 @@ double Graph::getMinPath(int startIndex, int endIndex, ostream &ostr) {
 }
 
 ostream& operator<<(ostream& ostr, const Edge &edge) {
-  ostr << edge.mWeight << ' ' << edge.mGraph->getVertex(edge.mVertexIdx1).getName()
-       << " <-> " << edge.mGraph->getVertex(edge.mVertexIdx2).getName() << endl;
+  ostr << edge.mWeight << ' ' << edge.mGraph->getVertex(edge.mVertexIdx1)->getName()
+       << " <-> " << edge.mGraph->getVertex(edge.mVertexIdx2)->getName() << endl;
   return ostr;
 }
 
 ostream& operator<<(ostream& ostr, const Edge *edge) {
-  ostr << edge->mWeight << ' ' << edge->mGraph->getVertex(edge->mVertexIdx1).getName()
-  << " <-> " << edge->mGraph->getVertex(edge->mVertexIdx2).getName() << endl;
+  ostr << edge->mWeight << ' ' << edge->mGraph->getVertex(edge->mVertexIdx1)->getName()
+  << " <-> " << edge->mGraph->getVertex(edge->mVertexIdx2)->getName() << endl;
   return ostr;
 }
 

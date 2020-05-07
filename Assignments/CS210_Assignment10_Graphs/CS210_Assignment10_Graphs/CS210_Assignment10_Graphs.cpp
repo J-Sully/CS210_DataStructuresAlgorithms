@@ -102,11 +102,11 @@ void runTests(const string &codePath) {
   graph1.addVertex("SF");
   graph1.addVertex("LA");
   graph1.addEdge(0, 1, 80);
-  assert(graph1.getEdge(0).mWeight == 80);
-  assert(graph1.getEdge(0).mVertexIdx1 == 0);
-  assert(graph1.getEdge(0).mVertexIdx1 == 0);
-  assert(graph1.getVertex(0).mEdgeIdxs[0] == 0);
-  assert(graph1.getVertex(1).mEdgeIdxs[0] == 0);
+  assert(graph1.getEdge(0)->mWeight == 80);
+  assert(graph1.getEdge(0)->mVertexIdx1 == 0);
+  assert(graph1.getEdge(0)->mVertexIdx1 == 0);
+  assert(graph1.getVertex(0)->mEdgeIdxs[0] == 0);
+  assert(graph1.getVertex(1)->mEdgeIdxs[0] == 0);
   cout << graph1 << endl;
   graph1.addVertex("Chicago");
   cout << graph1 << endl;
@@ -122,13 +122,13 @@ void runTests(const string &codePath) {
   assert(graph2.getMinPath(0, 1, cout) == 80);
   assert(graph2.getMinPath(0, 2, cout) == 200);
   assert(graph2.getMinPath(0, 3, cout) == 300);
-  assert(graph2.getMinPath(0, 0, cout) == 630);
-  assert(graph2.getMinPath(0, 0, cout) == 770);
+  assert(graph2.getMinPath(0, 4, cout) == 930);
+  assert(graph2.getMinPath(0, 5, cout) == 780);
   
   
  
   Graph graph3(codePath + GRAPH_INPUT2);
-  assert(graph3.getVertex(6).mName == "ST LOUIS");
+  assert(graph3.getVertex(6)->mName == "ST LOUIS");
   cout << graph3;
   
   
