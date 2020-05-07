@@ -119,18 +119,24 @@ void runTests(const string &codePath) {
   Graph graph2(codePath + GRAPH_INPUT1);
   cout << graph2;
   assert(graph2.getMinPath(0, 0, cout) == 0);
+  
   assert(graph2.getMinPath(0, 1, cout) == 80);
+  assert(graph2.getMinPath(1, 0, cout) == 80);
   assert(graph2.getMinPath(0, 2, cout) == 200);
+  assert(graph2.getMinPath(2, 0, cout) == 200);
   assert(graph2.getMinPath(0, 3, cout) == 300);
-  assert(graph2.getMinPath(0, 4, cout) == 930);
+  assert(graph2.getMinPath(3, 0, cout) == 300);
+  assert(graph2.getMinPath(0, 4, cout) == 920);
+  assert(graph2.getMinPath(4, 0, cout) == 920);
   assert(graph2.getMinPath(0, 5, cout) == 780);
+  assert(graph2.getMinPath(5, 0, cout) == 780);
   
   
- 
+ /*
   Graph graph3(codePath + GRAPH_INPUT2);
   assert(graph3.getVertex(6)->mName == "ST LOUIS");
   cout << graph3;
-  
+  */
   
 
 }

@@ -172,42 +172,45 @@ double Graph::getMinPath(int startIndex, int endIndex, ostream &ostr) const {
   int curVertexIdx = startIndex;
   double curPath = 0;
   double minPathAvailable = DBL_MAX;
-  stringstream ss;
+  
+  ostr << "Shortest Path From " << getVertex(startIndex)->mName << " to " << getVertex(endIndex)->mName << ':' << endl;
   
   for (int i = 0; i < numVertices; i++) {
-    if (i != startIndex) {
-      settledVertices[i] = false;
-      minPath[i] = DBL_MAX;
-      minPathS[i].empty();
-    }
+    settledVertices[i] = false;
+    minPath[i] = DBL_MAX;
+    minPathS[i].empty();
   }
-  settledVertices[startIndex] = true;
   minPath[startIndex] = 0;
+  settledVertices[startIndex] = true;
   while(!settledVertices[endIndex]) {
     curVertex = getVertex(curVertexIdx);
+    settledVertices[curVertexIdx] = true;
+    minPathAvailable = DBL_MAX;
     for (int i = 0; i < curVertex->getNumEdges(); i++) {
       curEdge = getEdge(curVertex->getEdgeIdx(i));
       otherVertexIdx = (curEdge->mVertexIdx1 == curVertexIdx ?
                         curEdge->mVertexIdx2 : curEdge->mVertexIdx1);
       if (!settledVertices[otherVertexIdx]) {
-        curPath = (minPath[curVertexIdx] == DBL_MAX ? curEdge->mWeight :  minPath[curVertexIdx] + curEdge->mWeight);
+        curPath = (curVertexIdx == startIndex ? curEdge->mWeight :  minPath[curVertexIdx] + curEdge->mWeight);
         if (minPath[otherVertexIdx] >= curPath) {
+          stringstream ss;
           minPath[otherVertexIdx] = curPath;
-          ss << minPathS[curVertexIdx] << endl;
+          ss << minPathS[curVertexIdx];
           ss << curEdge;
           minPathS[otherVertexIdx] = ss.str();
-          ss.clear();
+          ss.flush();
         }
       }
     }
     for (int i = 0; i < numVertices; i++) {
       if (!settledVertices[i] && (minPathAvailable > minPath[i])) {
         curVertexIdx = i;
+        minPathAvailable = minPath[i];
       }
     }
-    settledVertices[curVertexIdx] = true;
-    minPathAvailable = DBL_MAX;
   }
+  ostr << minPathS[endIndex];
+  ostr << "Total Distance: " << minPath[endIndex] << endl << endl;
   return minPath[endIndex];
 }
 
