@@ -21,6 +21,8 @@ using namespace std;
 
 #include "DynamicArray.h"
 
+ostream& operator<<(ostream& ostr, const Edge *edge);
+
 // Edge
 class Graph;
 static int sNumEdgeObjects = 0;
@@ -33,10 +35,6 @@ struct Edge {
   Edge(const double weight, int vertexIdx1, int vertexIdx2, int edgeIdx, const Graph* graph) : mWeight(weight), mVertexIdx1(vertexIdx1), mVertexIdx2(vertexIdx2), mEdgeIdx(edgeIdx), mGraph(graph)  { sNumEdgeObjects++; }
   // update sNumEdgeObjects for bookkeeping.
   ~Edge() { sNumEdgeObjects--; mGraph = nullptr;};
-
-  // makes streaming easier
-  friend ostream& operator<<(ostream& ostr, const Edge *edge);
-  friend ostream& operator<<(ostream& ostr, const Edge &edge);
   
   double mWeight = 0;
   // indexes correspond to the index of Vertex/Edge in mGraph
@@ -58,9 +56,6 @@ struct Vertex {
   int getEdgeIdx(int index) const { return mEdgeIdxs[index]; }
   int getNumEdges() const { return mEdgeIdxs.getSize(); }
   const DynamicArray<int>& getEdges() { return mEdgeIdxs; }
-  
-  // makes streaming easier
-  friend ostream& operator<<(ostream& ostr, const Vertex *vertex);
   
   string mName;
   // indexes correspond to the index of Vertex/Edge in mGraph
@@ -206,12 +201,6 @@ double Graph::getMinPath(int startIndex, int endIndex, ostream &ostr) const {
   ostr << minPathS[endIndex];
   ostr << "Total Distance: " << minPath[endIndex] << endl << endl;
   return minPath[endIndex];
-}
-
-ostream& operator<<(ostream& ostr, const Edge &edge) {
-  ostr << edge.mWeight << ' ' << edge.mGraph->getVertex(edge.mVertexIdx1)->getName()
-       << " <-> " << edge.mGraph->getVertex(edge.mVertexIdx2)->getName() << endl;
-  return ostr;
 }
 
 ostream& operator<<(ostream& ostr, const Edge *edge) {
