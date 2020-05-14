@@ -15,8 +15,8 @@
 #include <sstream>
 using namespace std;
 
-#define RUN_TESTS
-//#define RUN_INPUT_TEST
+//#define RUN_TESTS
+#define RUN_INPUT_TEST
 
 #include "Graph.h"
 #include "DynamicArray.h"
